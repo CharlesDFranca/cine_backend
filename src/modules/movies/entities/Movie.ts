@@ -14,7 +14,11 @@ type MovieProps = {
 
 export class Movie {
   private constructor(
-    private readonly id: string,
+    private readonly _id: string,
     private readonly props: MovieProps,
   ) {}
+
+  static create(props: MovieProps, id: string) {
+    return new Movie(id, props);
+  }
 }
