@@ -20,8 +20,20 @@ export class User extends Entity {
     super(userId, props.createdAt, props.updatedAt);
   }
 
-  static create(props: UserProps, _id: Id) {
-    return new User(_id, props);
+  static create(props: UserProps): User {
+    const userId = Id.generate();
+
+    if (props.createdAt.getTime() > props.updatedAt.getTime()) {
+      throw new Error(
+        "A data de criação não pode estar a frente da data de atualização",
+      );
+    }
+
+    return new User(userId, props);
+  }
+
+  static restore(id: Id, props: UserProps): User {
+    return new User(id, props);
   }
 
   get name(): UserName {
