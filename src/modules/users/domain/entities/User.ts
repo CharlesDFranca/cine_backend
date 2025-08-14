@@ -1,6 +1,8 @@
-import type { UserEmail } from "../value-objects/UserEmail.js";
-import type { UserName } from "../value-objects/UserName.js";
-import type { UserPassword } from "../value-objects/UserPassword.js";
+import { Entity } from "@/shared/domain/entities/Entity.js";
+import { UserEmail } from "../value-objects/UserEmail.js";
+import { UserName } from "../value-objects/UserName.js";
+import { UserPassword } from "../value-objects/UserPassword.js";
+import { Id } from "@/shared/domain/value-objects/Id.js";
 
 type UserProps = {
   name: UserName;
@@ -10,14 +12,28 @@ type UserProps = {
   updatedAt: Date;
 };
 
-export class User {
+export class User extends Entity {
   private constructor(
-    private readonly _id: string,
+    private readonly userId: Id,
     private readonly props: UserProps,
-  ) {}
+  ) {
+    super(userId, props.createdAt, props.updatedAt);
+  }
 
-  static create(props: UserProps, _id: string) {
-    return new User(_id, props);
+  static create(props: UserProps): User {
+    const userId = Id.generate();
+
+    if (props.createdAt.getTime() > props.updatedAt.getTime()) {
+      throw new Error(
+        "A data de criação não pode estar a frente da data de atualização",
+      );
+    }
+
+    return new User(userId, props);
+  }
+
+  static restore(id: Id, props: UserProps): User {
+    return new User(id, props);
   }
 
   get name(): UserName {
