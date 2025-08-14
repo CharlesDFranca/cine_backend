@@ -1,7 +1,9 @@
-export abstract class Entity {
-  constructor(private readonly _id: string) {}
+import type { Id } from "../value-objects/Id.js";
 
-  get id(): string {
+export abstract class Entity {
+  constructor(private readonly _id: Id) {}
+
+  get id(): Id {
     return this._id;
   }
 }
