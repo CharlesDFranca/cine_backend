@@ -1,7 +1,7 @@
 import { Entity } from "@/shared/domain/entities/Entity.js";
-import type { UserEmail } from "../value-objects/UserEmail.js";
-import type { UserName } from "../value-objects/UserName.js";
-import type { UserPassword } from "../value-objects/UserPassword.js";
+import { UserEmail } from "../value-objects/UserEmail.js";
+import { UserName } from "../value-objects/UserName.js";
+import { UserPassword } from "../value-objects/UserPassword.js";
 import { Id } from "@/shared/domain/value-objects/Id.js";
 
 type UserProps = {
@@ -17,7 +17,7 @@ export class User extends Entity {
     private readonly userId: Id,
     private readonly props: UserProps,
   ) {
-    super(userId);
+    super(userId, props.createdAt, props.updatedAt);
   }
 
   static create(props: UserProps, _id: Id) {
