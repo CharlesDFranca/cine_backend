@@ -1,6 +1,8 @@
+import { Entity } from "@/shared/domain/entities/Entity.js";
 import type { UserEmail } from "../value-objects/UserEmail.js";
 import type { UserName } from "../value-objects/UserName.js";
 import type { UserPassword } from "../value-objects/UserPassword.js";
+import { Id } from "@/shared/domain/value-objects/Id.js";
 
 type UserProps = {
   name: UserName;
@@ -10,13 +12,15 @@ type UserProps = {
   updatedAt: Date;
 };
 
-export class User {
+export class User extends Entity {
   private constructor(
-    private readonly _id: string,
+    private readonly userId: Id,
     private readonly props: UserProps,
-  ) {}
+  ) {
+    super(userId);
+  }
 
-  static create(props: UserProps, _id: string) {
+  static create(props: UserProps, _id: Id) {
     return new User(_id, props);
   }
 
