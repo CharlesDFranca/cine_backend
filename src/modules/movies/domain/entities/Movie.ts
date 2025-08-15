@@ -90,9 +90,11 @@ export class Movie extends Entity {
 
   isWatched() {
     this.props.watched = true;
+    this.touch();
   }
 
   isNotWatched() {
     this.props.watched = false;
+    this.touch();
   }
 }
