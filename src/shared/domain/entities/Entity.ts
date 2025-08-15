@@ -4,7 +4,7 @@ export abstract class Entity {
   constructor(
     private readonly _id: Id,
     private readonly _createdAt: Date,
-    private readonly _updatedAt: Date,
+    private _updatedAt: Date,
   ) {}
 
   get id(): Id {
@@ -17,5 +17,9 @@ export abstract class Entity {
 
   get updatedAt(): Date {
     return this._updatedAt;
+  }
+
+  touch() {
+    this._updatedAt = new Date();
   }
 }
