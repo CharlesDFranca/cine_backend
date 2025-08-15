@@ -9,9 +9,9 @@ export class UserEmailUniquenessCheckerService
     user: User,
     userExists: (email: UserEmail) => Promise<boolean>,
   ): Promise<void> {
-    const emalAlreadyUsed = await userExists(user.email);
+    const emailAlreadyUsed = await userExists(user.email);
 
-    if (emalAlreadyUsed) {
+    if (emailAlreadyUsed) {
       throw new Error("O email já está sendo usado");
     }
   }
