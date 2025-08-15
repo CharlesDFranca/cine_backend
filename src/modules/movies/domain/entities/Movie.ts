@@ -45,4 +45,46 @@ export class Movie extends Entity {
   static restore(movieId: Id, props: MovieProps) {
     return new Movie(movieId, props);
   }
+
+  //#region getters
+  get title() {
+    return this.props.title;
+  }
+
+  get genre() {
+    return this.props.genre;
+  }
+
+  get userId() {
+    return this.props.userId;
+  }
+
+  get classification() {
+    return this.props.classification;
+  }
+
+  get platform() {
+    return this.props.platform;
+  }
+
+  get showtime() {
+    return this.props.showtime;
+  }
+
+  get duration() {
+    return this.props.duration;
+  }
+
+  get observation() {
+    return this.props.observation;
+  }
+
+  get watched() {
+    return this.props.watched;
+  }
+
+  get rating() {
+    return this.props.rating;
+  }
+  //#endregion
 }
