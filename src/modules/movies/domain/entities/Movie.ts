@@ -1,32 +1,37 @@
-import type { MovieClassification } from "../value-objects/MovieClassification.js";
-import type { MovieDuration } from "../value-objects/MovieDuration.js";
-import type { MovieGenre } from "../value-objects/MovieGenre.js";
-import type { MovieObservation } from "../value-objects/MovieObservation.js";
-import type { MoviePlatform } from "../value-objects/MoviePlatform.js";
-import type { MovieTitle } from "../value-objects/MovieTitle.js";
+import { Id } from "@/shared/domain/value-objects/Id.js";
+import { MovieClassification } from "../value-objects/MovieClassification";
+import { MovieDuration } from "../value-objects/MovieDuration";
+import { MovieGenre } from "../value-objects/MovieGenre";
+import { MovieObservation } from "../value-objects/MovieObservation";
+import { MoviePlatform } from "../value-objects/MoviePlatform";
+import { MovieRating } from "../value-objects/MovieRating.js";
+import { MovieTitle } from "../value-objects/MovieTitle";
+import { Entity } from "@/shared/domain/entities/Entity";
 
 type MovieProps = {
   title: MovieTitle;
   genre: MovieGenre;
-  userId: string;
+  userId: Id;
   classification: MovieClassification;
   platform: MoviePlatform;
   showtime: Date;
   duration: MovieDuration;
   observation?: MovieObservation;
   watched: boolean;
-  rating: number;
+  rating: MovieRating;
   createdAt: Date;
   updatedAt: Date;
 };
 
-export class Movie {
+export class Movie extends Entity {
   private constructor(
-    private readonly _id: string,
+    private readonly movieId: Id,
     private readonly props: MovieProps,
-  ) {}
+  ) {
+    super(movieId, props.createdAt, props.updatedAt);
+  }
 
-  static create(props: MovieProps, id: string) {
+  static create(props: MovieProps, id: Id) {
     return new Movie(id, props);
   }
 }
