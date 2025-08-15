@@ -87,4 +87,12 @@ export class Movie extends Entity {
     return this.props.rating;
   }
   //#endregion
+
+  isWatched() {
+    this.props.watched = true;
+  }
+
+  isNotWatched() {
+    this.props.watched = false;
+  }
 }
