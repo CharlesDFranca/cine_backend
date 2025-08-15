@@ -31,7 +31,18 @@ export class Movie extends Entity {
     super(movieId, props.createdAt, props.updatedAt);
   }
 
-  static create(props: MovieProps, id: Id) {
-    return new Movie(id, props);
+  static create(props: MovieProps) {
+    const movieId = Id.generate();
+
+    if (props.createdAt.getTime() > props.updatedAt.getTime()) {
+      throw new Error(
+        "A data de criação não pode estar a frente da data de atualização",
+      );
+    }
+    return new Movie(movieId, props);
+  }
+
+  static restore(movieId: Id, props: MovieProps) {
+    return new Movie(movieId, props);
   }
 }
