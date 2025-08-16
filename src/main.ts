@@ -1,6 +1,8 @@
 import { envConfig } from "./config/env/EnvConfig";
 import express from "express";
 
+import "@/shared/infra/database/TypeormClient";
+
 const app = express();
 
 const PORT = envConfig.getPort();
