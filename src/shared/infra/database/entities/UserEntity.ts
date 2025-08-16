@@ -25,7 +25,7 @@ export class UserEntity {
   password!: string;
 
   @OneToMany(() => MovieEntity, (movie) => movie.user)
-  movies!: MovieEntity[];
+  movies?: MovieEntity[];
 
   @CreateDateColumn({ type: "timestamptz" })
   createdAt!: Date;
