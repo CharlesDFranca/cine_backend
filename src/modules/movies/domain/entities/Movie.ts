@@ -7,9 +7,11 @@ import { MoviePlatform } from "../value-objects/MoviePlatform";
 import { MovieRating } from "../value-objects/MovieRating.js";
 import { MovieTitle } from "../value-objects/MovieTitle";
 import { Entity } from "@/shared/domain/entities/Entity";
+import { MovieImage } from "../value-objects/MovieImage";
 
 type MovieProps = {
   title: MovieTitle;
+  image: MovieImage;
   genre: MovieGenre;
   userId: Id;
   classification: MovieClassification;
