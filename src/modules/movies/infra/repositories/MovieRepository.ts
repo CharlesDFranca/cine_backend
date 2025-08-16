@@ -5,7 +5,9 @@ import { MovieTitle } from "../../domain/value-objects/MovieTitle";
 import { AppDataSource } from "@/shared/infra/database/TypeormClient";
 import { MovieEntity } from "@/shared/infra/database/entities/MovieEntity";
 import { TypeormMovieMapper } from "../mappers/TypeormMovieMapper";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class MovieRepository implements IMoviesRepository {
   private readonly repository = AppDataSource.getRepository(MovieEntity);
 
