@@ -7,10 +7,12 @@ const envConfigSchema = z.object({
     .int("O valor da porta precisa ser um inteiro")
     .transform((n) => (Number(n) > 0 ? n : 3000))
     .default(3000),
+  DATABASE_URL: z.string(),
 });
 
 export interface IEnvConfig {
   getPort(): number;
+  getDbUrl(): string;
 }
 
 class EnvConfig implements IEnvConfig {
@@ -28,6 +30,10 @@ class EnvConfig implements IEnvConfig {
 
   getPort(): number {
     return this.data.PORT;
+  }
+
+  getDbUrl(): string {
+    return this.data.DATABASE_URL;
   }
 }
 
