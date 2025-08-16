@@ -93,6 +93,10 @@ export class Movie extends Entity {
   get rating() {
     return this.props.rating;
   }
+
+  get image() {
+    return this.props.image;
+  }
   //#endregion
 
   isWatched() {
