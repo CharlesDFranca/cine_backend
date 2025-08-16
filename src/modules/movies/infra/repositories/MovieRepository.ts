@@ -1,0 +1,46 @@
+import { Id } from "@/shared/domain/value-objects/Id";
+import { Movie } from "../../domain/entities/Movie";
+import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
+import { MovieTitle } from "../../domain/value-objects/MovieTitle";
+import { AppDataSource } from "@/shared/infra/database/TypeormClient";
+import { MovieEntity } from "@/shared/infra/database/entities/MovieEntity";
+import { TypeormMovieMapper } from "../mappers/TypeormMovieMapper";
+
+export class MovieRepository implements IMoviesRepository {
+  private readonly repository = AppDataSource.getRepository(MovieEntity);
+
+  async save(movie: Movie): Promise<void> {
+    await this.repository.save(TypeormMovieMapper.toPersistence(movie));
+  }
+
+  async findById(movieId: Id): Promise<Movie | null> {
+    const movie = await this.repository.findOneBy({ id: movieId.value });
+    if (!movie) return null;
+
+    return TypeormMovieMapper.toDomain(movie);
+  }
+
+  async findByTitle(movieTitle: MovieTitle): Promise<Movie | null> {
+    const movie = await this.repository.findOneBy({ title: movieTitle.value });
+    if (!movie) return null;
+
+    return TypeormMovieMapper.toDomain(movie);
+  }
+
+  async exitsByTitleAndShowtime(movie: Movie): Promise<boolean> {
+    const movieExists = await this.repository.findOneBy({
+      title: movie.title.value,
+      showtime: movie.showtime,
+    });
+
+    return !!movieExists;
+  }
+
+  async update(movie: Movie): Promise<void> {
+    await this.repository.save(TypeormMovieMapper.toPersistence(movie));
+  }
+
+  async delete(movieId: Id): Promise<void> {
+    await this.repository.delete({ id: movieId.value });
+  }
+}
