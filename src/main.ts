@@ -3,6 +3,7 @@ import "reflect-metadata";
 import { envConfig } from "./config/env/EnvConfig";
 import express from "express";
 
+import "@/shared/infra/di/container";
 import "@/shared/infra/database/TypeormClient";
 
 const app = express();
