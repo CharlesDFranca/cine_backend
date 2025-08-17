@@ -7,7 +7,7 @@ const movieClassificationTypes = ["L", 10, 12, 14, 16, 18];
 export class MovieClassification {
   private constructor(private readonly props: MovieClassificationProps) {}
 
-  static creat(props: MovieClassificationProps) {
+  static create(props: MovieClassificationProps) {
     const classification = props.value;
 
     if (!classification) {

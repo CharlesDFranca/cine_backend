@@ -11,7 +11,7 @@ import { MovieImage } from "../value-objects/MovieImage";
 
 type MovieProps = {
   title: MovieTitle;
-  image: MovieImage;
+  image?: MovieImage;
   genre: MovieGenre;
   userId: Id;
   classification: MovieClassification;
@@ -20,7 +20,7 @@ type MovieProps = {
   duration: MovieDuration;
   observation?: MovieObservation;
   watched: boolean;
-  rating: MovieRating;
+  rating?: MovieRating;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -92,6 +92,10 @@ export class Movie extends Entity {
 
   get rating() {
     return this.props.rating;
+  }
+
+  get image() {
+    return this.props.image;
   }
   //#endregion
 
