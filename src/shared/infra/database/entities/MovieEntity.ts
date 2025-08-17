@@ -20,7 +20,7 @@ export class MovieEntity {
     nullable: false,
   })
   @JoinColumn({ name: "userId" })
-  user!: UserEntity;
+  user?: UserEntity;
 
   @RelationId((movie: MovieEntity) => movie.user)
   userId!: string;
@@ -33,6 +33,9 @@ export class MovieEntity {
 
   @Column({ type: "varchar" })
   genre!: string;
+
+  @Column({ type: "varchar" })
+  classification!: string;
 
   @Column({ type: "varchar" })
   platform!: string;

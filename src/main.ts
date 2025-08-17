@@ -8,6 +8,8 @@ import "@/shared/infra/database/TypeormClient";
 
 const app = express();
 
+app.use(express.json());
+
 const PORT = envConfig.getPort();
 
 app.listen(PORT, () => console.log(`App rodando na porta: ${PORT}`));

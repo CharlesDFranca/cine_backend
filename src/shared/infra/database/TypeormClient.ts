@@ -1,10 +1,12 @@
 import { envConfig } from "@/config/env/EnvConfig";
 import { DataSource } from "typeorm";
+import { UserEntity } from "./entities/UserEntity";
+import { MovieEntity } from "./entities/MovieEntity";
 
 export const AppDataSource = new DataSource({
   type: "postgres",
   url: envConfig.getDbUrl(),
-  entities: [],
+  entities: [UserEntity, MovieEntity],
   synchronize: true,
 });
 
