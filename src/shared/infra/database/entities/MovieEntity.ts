@@ -6,7 +6,6 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
-  RelationId,
 } from "typeorm";
 import { UserEntity } from "./UserEntity";
 
@@ -22,7 +21,7 @@ export class MovieEntity {
   @JoinColumn({ name: "userId" })
   user?: UserEntity;
 
-  @RelationId((movie: MovieEntity) => movie.user)
+  @Column({ type: "uuid", name: "userId" })
   userId!: string;
 
   @Column({ type: "varchar" })

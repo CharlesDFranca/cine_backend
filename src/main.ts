@@ -9,6 +9,7 @@ import "@/shared/infra/database/TypeormClient";
 import { SwaggerOpenApi } from "./docs/SwaggerOpenApi";
 
 import { userRoutes } from "./modules/users/presentation/http/routes/userRoutes";
+import { movieRoutes } from "./modules/movies/presentation/http/routes/movieRoutes";
 
 const app = express();
 
@@ -20,5 +21,6 @@ const openApiSpec = SwaggerOpenApi.buildApiDocument();
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.use("/users", userRoutes);
+app.use("/movies", movieRoutes);
 
 app.listen(PORT, () => console.log(`App rodando na porta: ${PORT}`));
