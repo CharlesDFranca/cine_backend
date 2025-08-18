@@ -14,6 +14,7 @@ export class TypeormUserMappper {
     const name = UserName.create({ value: userPersistedData.name });
     const password = UserPassword.create({
       value: userPersistedData.password,
+      isHashed: true,
     });
 
     return User.restore(userId, {

@@ -5,7 +5,9 @@ import { UserEmail } from "../../domain/value-objects/UserEmail";
 import { AppDataSource } from "@/shared/infra/database/TypeormClient";
 import { UserEntity } from "@/shared/infra/database/entities/UserEntity";
 import { TypeormUserMappper } from "../mappers/TypeormUserMapper";
+import { injectable } from "tsyringe";
 
+@injectable()
 export class UserRepository implements IUserRepository {
   private readonly repository = AppDataSource.getRepository(UserEntity);
 

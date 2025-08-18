@@ -1,16 +1,23 @@
 type UserPasswordProps = {
   value: string;
-  isHashed?: boolean;
+  isHashed: boolean;
 };
 
 export class UserPassword {
   private constructor(private readonly props: UserPasswordProps) {}
 
-  static create(props: UserPasswordProps): UserPassword {
+  static create(
+    props: UserPasswordProps,
+    isHashed: boolean = false,
+  ): UserPassword {
     const password = props.value.trim();
 
     if (!password) {
       throw new Error("A senha não pode ser vazia");
+    }
+
+    if (isHashed) {
+      return new UserPassword({ value: password, isHashed: true });
     }
 
     const MIN_LENGTH = 8;
@@ -48,10 +55,18 @@ export class UserPassword {
       throw new Error("A senha deve ter pelo menos um caractere especial");
     }
 
-    return new UserPassword({ value: password });
+    return new UserPassword({ value: password, isHashed: false });
+  }
+
+  static restore(props: UserPasswordProps) {
+    return UserPassword.create({ value: props.value, isHashed: true }, true);
   }
 
   get value(): string {
     return this.props.value;
+  }
+
+  get isHashed(): boolean {
+    return this.props.isHashed;
   }
 }
