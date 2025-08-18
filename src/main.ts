@@ -16,8 +16,8 @@ app.use(express.json());
 
 const PORT = envConfig.getPort();
 
-const openapi = SwaggerOpenApi.buildOpenAPIDocument();
-app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
+const openApiSpec = SwaggerOpenApi.buildApiDocument();
+app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.use("/users", userRoutes);
 

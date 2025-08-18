@@ -1,3 +1,4 @@
+import { userRegistry } from "@/modules/users/presentation/docs/userRegistry";
 import {
   OpenApiGeneratorV3,
   OpenAPIRegistry,
@@ -6,15 +7,15 @@ import {
 export class SwaggerOpenApi {
   private constructor() {}
 
-  static buildOpenAPIDocument() {
-    const globalRegistry = new OpenAPIRegistry([]);
+  static buildApiDocument() {
+    const globalRegistry = new OpenAPIRegistry([userRegistry]);
 
     const generator = new OpenApiGeneratorV3(globalRegistry.definitions);
 
     return generator.generateDocument({
-      openapi: "3.0.3",
+      openapi: "3.0.0",
       info: {
-        title: "Cine API",
+        title: "Habit Quest",
         version: "1.0.0",
       },
     });
