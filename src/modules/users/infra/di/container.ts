@@ -6,10 +6,16 @@ import { UserEmailUniquenessCheckerService } from "../../domain/services/UserEma
 import { IHashProvider } from "../../app/contracts/IHashProvider";
 import { BcryptHashProvider } from "../services/BcryptHashProvider";
 
-container.register<IUserRepository>("UserRepository", UserRepository);
+container.register<IUserRepository>("UserRepository", {
+  useClass: UserRepository,
+});
 container.register<IUserEmailUniquenessCheckerService>(
   "UserEmailUniquenessCheckerService",
-  UserEmailUniquenessCheckerService,
+  {
+    useClass: UserEmailUniquenessCheckerService,
+  },
 );
 
-container.register<IHashProvider>("HashProvider", BcryptHashProvider);
+container.register<IHashProvider>("HashProvider", {
+  useClass: BcryptHashProvider,
+});
