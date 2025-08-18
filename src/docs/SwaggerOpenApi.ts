@@ -1,3 +1,4 @@
+import { movieRegistry } from "@/modules/movies/presentation/docs/movieRegistry";
 import { userRegistry } from "@/modules/users/presentation/docs/userRegistry";
 import {
   OpenApiGeneratorV3,
@@ -8,7 +9,7 @@ export class SwaggerOpenApi {
   private constructor() {}
 
   static buildApiDocument() {
-    const globalRegistry = new OpenAPIRegistry([userRegistry]);
+    const globalRegistry = new OpenAPIRegistry([userRegistry, movieRegistry]);
 
     const generator = new OpenApiGeneratorV3(globalRegistry.definitions);
 

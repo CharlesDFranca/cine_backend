@@ -1,8 +1,8 @@
 type MovieClassificationProps = {
-  value: number | string;
+  value: string;
 };
 
-const movieClassificationTypes = ["L", 10, 12, 14, 16, 18];
+const movieClassificationTypes = ["L", "10", "12", "14", "16", "18"];
 
 export class MovieClassification {
   private constructor(private readonly props: MovieClassificationProps) {}
