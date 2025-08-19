@@ -5,6 +5,7 @@ import { CreateUserUseCase } from "../../../app/use-cases/CreateUserUseCase";
 import { UseCaseExecutor } from "@/shared/app/use-cases/UseCaseExecutor";
 import { ZodError } from "zod";
 import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
+import { DeleteUserUseCase } from "@/modules/users/app/use-cases/DeleteUserUseCase";
 
 export class UserControllers {
   private constructor() {}
@@ -56,6 +57,36 @@ export class UserControllers {
       const data = await UseCaseExecutor.run(usecase, result.data);
 
       res.status(200).json(data);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      if (err instanceof Error) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+
+  static async delete(req: Request, res: Response) {
+    try {
+      const result = findByIdSchema.safeParse(req.params);
+
+      if (!result.success) {
+        return res.status(400).json({
+          error: {
+            name: result.error.name,
+            message: result.error.message,
+          },
+        });
+      }
+
+      const usecase = container.resolve(DeleteUserUseCase);
+      const data = await UseCaseExecutor.run(usecase, result.data);
+
+      res.status(204).json(data);
     } catch (err) {
       if (err instanceof ZodError) {
         return res.status(400).json({ error: err.message });

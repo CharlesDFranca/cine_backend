@@ -10,3 +10,7 @@ userRoutes.post("", (req: Request, res: Response) =>
 userRoutes.get("/:userId", (req: Request, res: Response) =>
   UserControllers.findById(req, res),
 );
+
+userRoutes.delete("/:userId", (req: Request, res: Response) =>
+  UserControllers.delete(req, res),
+);
