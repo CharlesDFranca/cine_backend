@@ -18,7 +18,7 @@ export const createUserSchema = z.object({
     .openapi("User password", { example: "Str0ng!!" }),
 });
 
-export const findByIdSchema = z.object({
+export const findUserByIdSchema = z.object({
   userId: z.uuidv4(),
 });
 

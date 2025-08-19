@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import {
   createUserSchema,
-  findByIdSchema,
+  findUserByIdSchema,
   updateUserSchema,
 } from "../../schemas/userSchemas";
 import { container } from "tsyringe";
@@ -47,7 +47,7 @@ export class UserControllers {
 
   static async findById(req: Request, res: Response) {
     try {
-      const result = findByIdSchema.safeParse(req.params);
+      const result = findUserByIdSchema.safeParse(req.params);
 
       if (!result.success) {
         return res.status(400).json({
@@ -78,7 +78,7 @@ export class UserControllers {
   static async update(req: Request, res: Response) {
     try {
       const resultUpdateData = updateUserSchema.safeParse(req.body);
-      const resultUserId = findByIdSchema.safeParse(req.params);
+      const resultUserId = findUserByIdSchema.safeParse(req.params);
 
       if (!resultUpdateData.success || !resultUserId.success) {
         const result = resultUpdateData.error ? resultUpdateData : resultUserId;
@@ -113,7 +113,7 @@ export class UserControllers {
 
   static async delete(req: Request, res: Response) {
     try {
-      const result = findByIdSchema.safeParse(req.params);
+      const result = findUserByIdSchema.safeParse(req.params);
 
       if (!result.success) {
         return res.status(400).json({
