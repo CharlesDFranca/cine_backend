@@ -17,3 +17,7 @@ export const createUserSchema = z.object({
     .nonoptional("A senha é obrigatória")
     .openapi("User password", { example: "Str0ng!!" }),
 });
+
+export const findByIdSchema = z.object({
+  userId: z.uuidv4(),
+});
