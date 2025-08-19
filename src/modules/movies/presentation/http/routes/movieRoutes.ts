@@ -5,3 +5,6 @@ export const movieRoutes = express.Router();
 movieRoutes.post("", (req: Request, res: Response) =>
   MovieControllers.create(req, res),
 );
+movieRoutes.get("/title", (req: Request, res: Response) =>
+  MovieControllers.findByTitle(req, res),
+);
