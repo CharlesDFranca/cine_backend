@@ -14,3 +14,7 @@ userRoutes.get("/:userId", (req: Request, res: Response) =>
 userRoutes.delete("/:userId", (req: Request, res: Response) =>
   UserControllers.delete(req, res),
 );
+
+userRoutes.put("/:userId", (req: Request, res: Response) =>
+  UserControllers.update(req, res),
+);

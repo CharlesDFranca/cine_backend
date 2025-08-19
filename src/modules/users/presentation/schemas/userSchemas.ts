@@ -21,3 +21,15 @@ export const createUserSchema = z.object({
 export const findByIdSchema = z.object({
   userId: z.uuidv4(),
 });
+
+export const updateUserSchema = z.object({
+  name: z.string().optional().openapi("User name", { example: "User Name" }),
+  email: z
+    .email()
+    .optional()
+    .openapi("User email", { example: "email@domain.com" }),
+  password: z
+    .string()
+    .optional()
+    .openapi("User password", { example: "Str0ng!!" }),
+});
