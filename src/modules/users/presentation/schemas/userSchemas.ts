@@ -17,3 +17,19 @@ export const createUserSchema = z.object({
     .nonoptional("A senha é obrigatória")
     .openapi("User password", { example: "Str0ng!!" }),
 });
+
+export const findUserByIdSchema = z.object({
+  userId: z.uuidv4(),
+});
+
+export const updateUserSchema = z.object({
+  name: z.string().optional().openapi("User name", { example: "User Name" }),
+  email: z
+    .email()
+    .optional()
+    .openapi("User email", { example: "email@domain.com" }),
+  password: z
+    .string()
+    .optional()
+    .openapi("User password", { example: "Str0ng!!" }),
+});

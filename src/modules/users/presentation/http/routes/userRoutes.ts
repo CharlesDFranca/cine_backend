@@ -6,3 +6,15 @@ export const userRoutes = express.Router();
 userRoutes.post("", (req: Request, res: Response) =>
   UserControllers.create(req, res),
 );
+
+userRoutes.get("/:userId", (req: Request, res: Response) =>
+  UserControllers.findById(req, res),
+);
+
+userRoutes.delete("/:userId", (req: Request, res: Response) =>
+  UserControllers.delete(req, res),
+);
+
+userRoutes.put("/:userId", (req: Request, res: Response) =>
+  UserControllers.update(req, res),
+);

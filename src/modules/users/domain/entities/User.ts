@@ -47,4 +47,19 @@ export class User extends Entity {
   get password(): UserPassword {
     return this.props.password;
   }
+
+  updateName(name: UserName) {
+    this.props.name = name;
+    this.touch();
+  }
+
+  updateEmail(email: UserEmail) {
+    this.props.email = email;
+    this.touch();
+  }
+
+  updatePassword(password: UserPassword) {
+    this.props.password = password;
+    this.touch();
+  }
 }
