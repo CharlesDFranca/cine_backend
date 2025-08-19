@@ -11,3 +11,6 @@ movieRoutes.get("/title", (req: Request, res: Response) =>
 movieRoutes.delete("/:movieId", (req: Request, res: Response) =>
   MovieControllers.delete(req, res),
 );
+movieRoutes.patch("/toggleWatched/:movieId", (req: Request, res: Response) =>
+  MovieControllers.toggleWatched(req, res),
+);
