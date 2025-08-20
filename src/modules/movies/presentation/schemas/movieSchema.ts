@@ -29,3 +29,13 @@ export const createMovieSchema = z.object({
     .optional()
     .openapi("Movie Rating", { example: 10.0 }),
 });
+
+export const findMovieByTitleSchema = z.object({
+  title: z.string().openapi("Movie Ttile", { example: "Vingadores" }),
+});
+
+export const findMovieByIdSchema = z.object({
+  movieId: z
+    .uuidv4()
+    .openapi("Movie Id", { example: "e50b165d-12ae-467f-9276-7ce55373208f" }),
+});
