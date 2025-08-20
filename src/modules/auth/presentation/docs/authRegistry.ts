@@ -1,5 +1,9 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
-import { loginUserSchema, registerUserSchema } from "../schema/authSchema";
+import {
+  loginUserSchema,
+  refreshTokenSchema,
+  registerUserSchema,
+} from "../schema/authSchema";
 import { z } from "zod";
 
 export const authRegistry = new OpenAPIRegistry();
@@ -57,8 +61,46 @@ authRegistry.registerPath({
     },
   },
   responses: {
-    201: {
+    200: {
       description: "User logged",
+      content: {
+        "application/json": {
+          schema: z.object({
+            accessToken: z.jwt(),
+            refreshToken: z.jwt(),
+          }),
+        },
+      },
+    },
+    400: {
+      description: "Bad request",
+      content: {
+        "application/json": {
+          schema: z.any(),
+        },
+      },
+    },
+  },
+  tags: ["Auth"],
+});
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/refreshToken",
+  description: "Refresh token user",
+  summary: "Refresh token",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: refreshTokenSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    200: {
+      description: "Token refreshed",
       content: {
         "application/json": {
           schema: z.object({
