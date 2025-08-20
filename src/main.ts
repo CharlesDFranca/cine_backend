@@ -10,6 +10,7 @@ import { SwaggerOpenApi } from "./docs/SwaggerOpenApi";
 
 import { userRoutes } from "./modules/users/presentation/http/routes/userRoutes";
 import { movieRoutes } from "./modules/movies/presentation/http/routes/movieRoutes";
+import { authRoutes } from "./modules/auth/presentation/http/routes/authRoutes";
 
 const app = express();
 
@@ -20,6 +21,7 @@ const PORT = envConfig.getPort();
 const openApiSpec = SwaggerOpenApi.buildApiDocument();
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
+app.use("/auth", authRoutes);
 app.use("/users", userRoutes);
 app.use("/movies", movieRoutes);
 
