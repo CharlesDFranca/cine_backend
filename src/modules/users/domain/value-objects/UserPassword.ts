@@ -1,10 +1,14 @@
+import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
+
 type UserPasswordProps = {
   value: string;
   isHashed: boolean;
 };
 
-export class UserPassword {
-  private constructor(private readonly props: UserPasswordProps) {}
+export class UserPassword extends ValueObject<UserPasswordProps> {
+  private constructor(private readonly props: UserPasswordProps) {
+    super(props);
+  }
 
   static create(
     props: UserPasswordProps,

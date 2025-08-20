@@ -1,12 +1,15 @@
 import { IdGenerator } from "../../utils/IdGenerator.js";
 import type { IIdGenerator } from "../contracts/IIdGenerator.js";
+import { ValueObject } from "./ValueObject.js";
 
 type IdProps = {
   value: string;
 };
 
-export class Id {
-  private constructor(private readonly props: IdProps) {}
+export class Id extends ValueObject<IdProps> {
+  private constructor(private readonly props: IdProps) {
+    super(props);
+  }
 
   static generate(idGenerator: IIdGenerator = new IdGenerator()) {
     return this.refresh({ value: idGenerator.use() });

@@ -1,7 +1,11 @@
+import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
+
 type UserEmailProps = { value: string };
 
-export class UserEmail {
-  private constructor(private readonly props: UserEmailProps) {}
+export class UserEmail extends ValueObject<UserEmailProps> {
+  private constructor(private readonly props: UserEmailProps) {
+    super(props);
+  }
 
   static create(props: UserEmailProps): UserEmail {
     const email = props.value.trim().toLocaleLowerCase();

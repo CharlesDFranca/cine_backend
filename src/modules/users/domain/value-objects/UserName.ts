@@ -1,9 +1,13 @@
+import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
+
 type UserNameProps = {
   value: string;
 };
 
-export class UserName {
-  private constructor(private readonly props: UserNameProps) {}
+export class UserName extends ValueObject<UserNameProps> {
+  private constructor(private readonly props: UserNameProps) {
+    super(props);
+  }
 
   static create(props: UserNameProps): UserName {
     const MIN_LENGTH = 2;

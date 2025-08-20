@@ -1,9 +1,13 @@
+import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
+
 type MovieRatingProps = {
   value: number;
 };
 
-export class MovieRating {
-  private constructor(private readonly props: MovieRatingProps) {}
+export class MovieRating extends ValueObject<MovieRatingProps> {
+  private constructor(private readonly props: MovieRatingProps) {
+    super(props);
+  }
 
   static create(props: MovieRatingProps) {
     const rating = props.value;
@@ -13,11 +17,14 @@ export class MovieRating {
     if (isNaN(Number(rating))) {
       throw new Error("A avaliação precisa ser númerica");
     }
+
     if (rating < MIN_RATING || rating > MAX_RATING) {
       throw new Error("Avaliação Inválida");
     }
+
     return new MovieRating({ value: rating });
   }
+
   get value() {
     return this.props.value;
   }
