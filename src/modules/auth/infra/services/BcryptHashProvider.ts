@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 
-import { IHashProvider } from "../../app/contracts/IHashProvider";
 import { injectable } from "tsyringe";
+import { IHashProvider } from "../../app/contracts/IHashProvider";
 
 @injectable()
 export class BcryptHashProvider implements IHashProvider {

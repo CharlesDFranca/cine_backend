@@ -8,6 +8,8 @@ const envConfigSchema = z.object({
     .transform((n) => (Number(n) > 0 ? n : 3000))
     .default(3000),
   DATABASE_URL: z.string(),
+  ACCESS_TOKEN_SECRET: z.string().min(128).max(128),
+  REFRESH_TOKEN_SECRET: z.string().min(128).max(128),
 });
 
 export interface IEnvConfig {
@@ -34,6 +36,14 @@ class EnvConfig implements IEnvConfig {
 
   getDbUrl(): string {
     return this.data.DATABASE_URL;
+  }
+
+  getAccessTokenSecret(): string {
+    return this.data.ACCESS_TOKEN_SECRET;
+  }
+
+  getRefreshTokenSecret(): string {
+    return this.data.REFRESH_TOKEN_SECRET;
   }
 }
 

@@ -1,21 +1,22 @@
 import { Request, Response } from "express";
 import {
-  findUserByIdSchema,
-  updateUserSchema,
-} from "../../schemas/userSchemas";
+  loginUserSchema,
+  refreshTokenSchema,
+  registerUserSchema,
+} from "../../schema/authSchema";
 import { container } from "tsyringe";
+import { RegisterUserUseCase } from "@/modules/auth/app/use-cases/RegisterUserUseCase";
 import { UseCaseExecutor } from "@/shared/app/use-cases/UseCaseExecutor";
 import { ZodError } from "zod";
-import { FindUserByIdUseCase } from "@/modules/users/app/use-cases/FindUserByIdUseCase";
-import { DeleteUserUseCase } from "@/modules/users/app/use-cases/DeleteUserUseCase";
-import { UpdateUserUseCase } from "@/modules/users/app/use-cases/UpdateUserUseCase";
+import { LoginUserUseCase } from "@/modules/auth/app/use-cases/LoginUserUseCase";
+import { RefreshTokenUseCase } from "@/modules/auth/app/use-cases/RefreshTokenUseCase";
 
-export class UserControllers {
+export class AuthControllers {
   private constructor() {}
 
-  static async findById(req: Request, res: Response) {
+  static async register(req: Request, res: Response) {
     try {
-      const result = findUserByIdSchema.safeParse(req.params);
+      const result = registerUserSchema.safeParse(req.body);
 
       if (!result.success) {
         return res.status(400).json({
@@ -26,7 +27,37 @@ export class UserControllers {
         });
       }
 
-      const usecase = container.resolve(FindUserByIdUseCase);
+      const usecase = container.resolve(RegisterUserUseCase);
+      const data = await UseCaseExecutor.run(usecase, result.data);
+
+      res.status(201).json(data);
+    } catch (err) {
+      if (err instanceof ZodError) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      if (err instanceof Error) {
+        return res.status(400).json({ error: err.message });
+      }
+
+      return res.status(500).json({ error: "Erro interno do servidor" });
+    }
+  }
+
+  static async login(req: Request, res: Response) {
+    try {
+      const result = loginUserSchema.safeParse(req.body);
+
+      if (!result.success) {
+        return res.status(400).json({
+          error: {
+            name: result.error.name,
+            message: result.error.message,
+          },
+        });
+      }
+
+      const usecase = container.resolve(LoginUserUseCase);
       const data = await UseCaseExecutor.run(usecase, result.data);
 
       res.status(200).json(data);
@@ -43,45 +74,9 @@ export class UserControllers {
     }
   }
 
-  static async update(req: Request, res: Response) {
+  static async refresh(req: Request, res: Response) {
     try {
-      const resultUpdateData = updateUserSchema.safeParse(req.body);
-      const resultUserId = findUserByIdSchema.safeParse(req.params);
-
-      if (!resultUpdateData.success || !resultUserId.success) {
-        const result = resultUpdateData.error ? resultUpdateData : resultUserId;
-
-        return res.status(400).json({
-          error: {
-            name: result.error?.name,
-            message: result.error?.message,
-          },
-        });
-      }
-
-      const usecase = container.resolve(UpdateUserUseCase);
-      const data = await UseCaseExecutor.run(usecase, {
-        ...resultUpdateData.data,
-        ...resultUserId.data,
-      });
-
-      res.status(200).json(data);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      if (err instanceof Error) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
-  }
-
-  static async delete(req: Request, res: Response) {
-    try {
-      const result = findUserByIdSchema.safeParse(req.params);
+      const result = refreshTokenSchema.safeParse(req.body);
 
       if (!result.success) {
         return res.status(400).json({
@@ -92,10 +87,10 @@ export class UserControllers {
         });
       }
 
-      const usecase = container.resolve(DeleteUserUseCase);
+      const usecase = container.resolve(RefreshTokenUseCase);
       const data = await UseCaseExecutor.run(usecase, result.data);
 
-      res.status(204).json(data);
+      res.status(200).json(data);
     } catch (err) {
       if (err instanceof ZodError) {
         return res.status(400).json({ error: err.message });
