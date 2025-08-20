@@ -11,6 +11,7 @@ import { SwaggerOpenApi } from "./docs/SwaggerOpenApi";
 import { userRoutes } from "./modules/users/presentation/http/routes/userRoutes";
 import { movieRoutes } from "./modules/movies/presentation/http/routes/movieRoutes";
 import { authRoutes } from "./modules/auth/presentation/http/routes/authRoutes";
+import { AuthMiddleware } from "./modules/auth/presentation/middlewares/AuthMiddlware";
 
 const app = express();
 
@@ -22,7 +23,8 @@ const openApiSpec = SwaggerOpenApi.buildApiDocument();
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openApiSpec));
 
 app.use("/auth", authRoutes);
-app.use("/users", userRoutes);
-app.use("/movies", movieRoutes);
+
+app.use("/users", AuthMiddleware.auth, userRoutes);
+app.use("/movies", AuthMiddleware.auth, movieRoutes);
 
 app.listen(PORT, () => console.log(`App rodando na porta: ${PORT}`));
