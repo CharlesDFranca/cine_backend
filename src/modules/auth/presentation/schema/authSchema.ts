@@ -28,3 +28,7 @@ export const loginUserSchema = z.object({
     .nonoptional("A senha é obrigatória")
     .openapi("User password", { example: "Str0ng!!" }),
 });
+
+export const refreshTokenSchema = z.object({
+  refreshToken: z.jwt(),
+});

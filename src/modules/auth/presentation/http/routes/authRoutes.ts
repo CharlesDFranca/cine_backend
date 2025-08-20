@@ -10,3 +10,7 @@ authRoutes.post("/register", (req: Request, res: Response) =>
 authRoutes.post("/login", (req: Request, res: Response) =>
   AuthControllers.login(req, res),
 );
+
+authRoutes.post("/refreshToken", (req: Request, res: Response) =>
+  AuthControllers.refresh(req, res),
+);
