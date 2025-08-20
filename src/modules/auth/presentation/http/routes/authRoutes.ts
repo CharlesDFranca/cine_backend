@@ -6,3 +6,7 @@ export const authRoutes = express.Router();
 authRoutes.post("/register", (req: Request, res: Response) =>
   AuthControllers.register(req, res),
 );
+
+authRoutes.post("/login", (req: Request, res: Response) =>
+  AuthControllers.login(req, res),
+);

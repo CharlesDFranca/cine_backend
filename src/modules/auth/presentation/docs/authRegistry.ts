@@ -1,5 +1,5 @@
 import { OpenAPIRegistry } from "@asteasolutions/zod-to-openapi";
-import { registerUserSchema } from "../schema/authSchema";
+import { loginUserSchema, registerUserSchema } from "../schema/authSchema";
 import { z } from "zod";
 
 export const authRegistry = new OpenAPIRegistry();
@@ -7,8 +7,8 @@ export const authRegistry = new OpenAPIRegistry();
 authRegistry.registerPath({
   method: "post",
   path: "/auth/register",
-  description: "Create a new User",
-  summary: "Create User",
+  description: "Register a new User",
+  summary: "Register an User",
   request: {
     body: {
       content: {
@@ -20,7 +20,7 @@ authRegistry.registerPath({
   },
   responses: {
     201: {
-      description: "User created",
+      description: "User registred",
       content: {
         "application/json": {
           schema: z.object({
@@ -39,5 +39,43 @@ authRegistry.registerPath({
       },
     },
   },
-  tags: ["User"],
+  tags: ["Auth"],
+});
+
+authRegistry.registerPath({
+  method: "post",
+  path: "/auth/login",
+  description: "User login",
+  summary: "User login",
+  request: {
+    body: {
+      content: {
+        "application/json": {
+          schema: loginUserSchema,
+        },
+      },
+    },
+  },
+  responses: {
+    201: {
+      description: "User logged",
+      content: {
+        "application/json": {
+          schema: z.object({
+            accessToken: z.jwt(),
+            refreshToken: z.jwt(),
+          }),
+        },
+      },
+    },
+    400: {
+      description: "Bad request",
+      content: {
+        "application/json": {
+          schema: z.any(),
+        },
+      },
+    },
+  },
+  tags: ["Auth"],
 });

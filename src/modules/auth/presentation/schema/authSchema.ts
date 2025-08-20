@@ -17,3 +17,14 @@ export const registerUserSchema = z.object({
     .nonoptional("A senha é obrigatória")
     .openapi("User password", { example: "Str0ng!!" }),
 });
+
+export const loginUserSchema = z.object({
+  email: z
+    .email()
+    .nonoptional("O email é obrigatório")
+    .openapi("User email", { example: "email@domain.com" }),
+  password: z
+    .string()
+    .nonoptional("A senha é obrigatória")
+    .openapi("User password", { example: "Str0ng!!" }),
+});
