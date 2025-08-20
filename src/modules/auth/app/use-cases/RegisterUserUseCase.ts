@@ -1,0 +1,68 @@
+import { User } from "@/modules/users/domain/entities/User";
+import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
+import { IUserEmailUniquenessCheckerService } from "@/modules/users/domain/services/contracts/IUserEmailUniquenessCheckerService";
+import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
+import { UserName } from "@/modules/users/domain/value-objects/UserName";
+import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword";
+import { IUseCase } from "@/shared/app/contracts/IUseCase";
+import { inject, injectable } from "tsyringe";
+import { ITokenProvider } from "../contracts/ITokenProvider";
+import { IHashProvider } from "../contracts/IHashProvider";
+
+type RegisterUserInput = {
+  name: string;
+  email: string;
+  password: string;
+};
+
+type RegisterUserOutput = {
+  accessToken: string;
+  refreshToken: string;
+};
+
+@injectable()
+export class RegisterUserUseCase
+  implements IUseCase<RegisterUserInput, RegisterUserOutput>
+{
+  constructor(
+    @inject("UserRepository")
+    private readonly userRepository: IUserRepository,
+    @inject("HashProvider")
+    private readonly hashProvider: IHashProvider,
+    @inject("TokenProvider")
+    private readonly tokenProvider: ITokenProvider,
+    @inject("UserEmailUniquenessCheckerService")
+    private readonly userEmailUniquenessCheckerService: IUserEmailUniquenessCheckerService,
+  ) {}
+
+  async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
+    const name = UserName.create({ value: input.name });
+    const email = UserEmail.create({ value: input.email });
+    const password = UserPassword.create({
+      value: input.password,
+      isHashed: false,
+    });
+
+    await this.userEmailUniquenessCheckerService.check(email, async (email) =>
+      this.userRepository.existsByEmail(email),
+    );
+
+    const hashedPassword = await this.hashProvider.hash(password.value);
+
+    const user = User.create({
+      name,
+      email,
+      password: UserPassword.restore({ value: hashedPassword, isHashed: true }),
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    await this.userRepository.save(user);
+
+    const { accessToken, refreshToken } = this.tokenProvider.generate({
+      userId: user.id.value,
+    });
+
+    return { accessToken, refreshToken };
+  }
+}
