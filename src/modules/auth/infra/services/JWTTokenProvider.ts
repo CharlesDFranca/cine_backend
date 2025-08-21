@@ -6,6 +6,7 @@ import {
 } from "../../app/contracts/ITokenProvider";
 import jwt from "jsonwebtoken";
 import { injectable } from "tsyringe";
+import { InvalidTokenError } from "../errors/InvalidTokenError";
 
 @injectable()
 export class JWTTokenProvider implements ITokenProvider {
@@ -25,10 +26,35 @@ export class JWTTokenProvider implements ITokenProvider {
   }
 
   verifyAccessToken(accessToken: string): TokenPayload {
-    return jwt.verify(accessToken, this.ACCESS_TOKEN_SECRET) as TokenPayload;
+    try {
+      return jwt.verify(accessToken, this.ACCESS_TOKEN_SECRET) as TokenPayload;
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        throw new InvalidTokenError("Token de acesso expirado", {
+          reason: "expired",
+        });
+      }
+      throw new InvalidTokenError("Token de acesso inválido", {
+        reason: "malformed",
+      });
+    }
   }
 
   verifyRefreshToken(refreshToken: string): TokenPayload {
-    return jwt.verify(refreshToken, this.REFRESH_TOKEN_SECRET) as TokenPayload;
+    try {
+      return jwt.verify(
+        refreshToken,
+        this.REFRESH_TOKEN_SECRET,
+      ) as TokenPayload;
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        throw new InvalidTokenError("Refresh token expirado", {
+          reason: "expired",
+        });
+      }
+      throw new InvalidTokenError("Refresh token inválido", {
+        reason: "malformed",
+      });
+    }
   }
 }

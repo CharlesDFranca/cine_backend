@@ -7,7 +7,6 @@ import {
 import { container } from "tsyringe";
 import { RegisterUserUseCase } from "@/modules/auth/app/use-cases/RegisterUserUseCase";
 import { UseCaseExecutor } from "@/shared/app/use-cases/UseCaseExecutor";
-import { ZodError } from "zod";
 import { LoginUserUseCase } from "@/modules/auth/app/use-cases/LoginUserUseCase";
 import { RefreshTokenUseCase } from "@/modules/auth/app/use-cases/RefreshTokenUseCase";
 
@@ -15,92 +14,35 @@ export class AuthControllers {
   private constructor() {}
 
   static async register(req: Request, res: Response) {
-    try {
-      const result = registerUserSchema.safeParse(req.body);
+    const input = registerUserSchema.safeParse(req.body);
 
-      if (!result.success) {
-        return res.status(400).json({
-          error: {
-            name: result.error.name,
-            message: result.error.message,
-          },
-        });
-      }
+    if (!input.success) throw input.error;
 
-      const usecase = container.resolve(RegisterUserUseCase);
-      const data = await UseCaseExecutor.run(usecase, result.data);
+    const usecase = container.resolve(RegisterUserUseCase);
+    const data = await UseCaseExecutor.run(usecase, input.data);
 
-      res.status(201).json(data);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      if (err instanceof Error) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    res.status(201).json(data);
   }
 
   static async login(req: Request, res: Response) {
-    try {
-      const result = loginUserSchema.safeParse(req.body);
+    const input = loginUserSchema.safeParse(req.body);
 
-      if (!result.success) {
-        return res.status(400).json({
-          error: {
-            name: result.error.name,
-            message: result.error.message,
-          },
-        });
-      }
+    if (!input.success) throw input.error;
 
-      const usecase = container.resolve(LoginUserUseCase);
-      const data = await UseCaseExecutor.run(usecase, result.data);
+    const usecase = container.resolve(LoginUserUseCase);
+    const data = await UseCaseExecutor.run(usecase, input.data);
 
-      res.status(200).json(data);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      if (err instanceof Error) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    res.status(200).json(data);
   }
 
   static async refresh(req: Request, res: Response) {
-    try {
-      const result = refreshTokenSchema.safeParse(req.body);
+    const input = refreshTokenSchema.safeParse(req.body);
 
-      if (!result.success) {
-        return res.status(400).json({
-          error: {
-            name: result.error.name,
-            message: result.error.message,
-          },
-        });
-      }
+    if (!input.success) throw input.error;
 
-      const usecase = container.resolve(RefreshTokenUseCase);
-      const data = await UseCaseExecutor.run(usecase, result.data);
+    const usecase = container.resolve(RefreshTokenUseCase);
+    const data = await UseCaseExecutor.run(usecase, input.data);
 
-      res.status(200).json(data);
-    } catch (err) {
-      if (err instanceof ZodError) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      if (err instanceof Error) {
-        return res.status(400).json({ error: err.message });
-      }
-
-      return res.status(500).json({ error: "Erro interno do servidor" });
-    }
+    res.status(200).json(data);
   }
 }

@@ -5,6 +5,7 @@ import { ITokenProvider } from "../contracts/ITokenProvider";
 import { inject, injectable } from "tsyringe";
 import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
 import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword";
+import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 
 type LoginUserInput = {
   email: string;
@@ -39,7 +40,10 @@ export class LoginUserUseCase
     const user = await this.userRepository.findByEmail(userEmail);
 
     if (!user) {
-      throw new Error("Email ou senha inválidos");
+      throw new InvalidCredentialsError("Email ou senha inválidos", {
+        email: input.email,
+        password: input.password,
+      });
     }
 
     const passwordMatch = await this.hashProvider.compare(
@@ -48,7 +52,10 @@ export class LoginUserUseCase
     );
 
     if (!passwordMatch) {
-      throw new Error("Email ou senha inválidos");
+      throw new InvalidCredentialsError("Email ou senha inválidos", {
+        email: input.email,
+        password: input.password,
+      });
     }
 
     const { accessToken, refreshToken } = this.tokenProvider.generate({
