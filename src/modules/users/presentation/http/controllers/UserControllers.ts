@@ -14,19 +14,12 @@ export class UserControllers {
   private constructor() {}
 
   static async findById(req: Request, res: Response) {
-    const result = findUserByIdSchema.safeParse(req.params);
+    const input = findUserByIdSchema.safeParse(req.params);
 
-    if (!result.success) {
-      return res.status(400).json({
-        error: {
-          name: result.error.name,
-          message: result.error.message,
-        },
-      });
-    }
+    if (!input.success) throw input.error;
 
     const usecase = container.resolve(FindUserByIdUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, input.data);
 
     const response = ResponseFormatter.success(data);
 
@@ -34,24 +27,16 @@ export class UserControllers {
   }
 
   static async update(req: Request, res: Response) {
-    const resultUpdateData = updateUserSchema.safeParse(req.body);
-    const resultUserId = findUserByIdSchema.safeParse(req.params);
+    const inputUpdateData = updateUserSchema.safeParse(req.body);
+    const inputUserId = findUserByIdSchema.safeParse(req.params);
 
-    if (!resultUpdateData.success || !resultUserId.success) {
-      const result = resultUpdateData.error ? resultUpdateData : resultUserId;
-
-      return res.status(400).json({
-        error: {
-          name: result.error?.name,
-          message: result.error?.message,
-        },
-      });
-    }
+    if (!inputUpdateData.success) throw inputUpdateData.error;
+    if (!inputUserId.success) throw inputUserId.error;
 
     const usecase = container.resolve(UpdateUserUseCase);
     const data = await UseCaseExecutor.run(usecase, {
-      ...resultUpdateData.data,
-      ...resultUserId.data,
+      ...inputUpdateData.data,
+      ...inputUserId.data,
     });
 
     const response = ResponseFormatter.success(data);
@@ -60,19 +45,12 @@ export class UserControllers {
   }
 
   static async delete(req: Request, res: Response) {
-    const result = findUserByIdSchema.safeParse(req.params);
+    const input = findUserByIdSchema.safeParse(req.params);
 
-    if (!result.success) {
-      return res.status(400).json({
-        error: {
-          name: result.error.name,
-          message: result.error.message,
-        },
-      });
-    }
+    if (!input.success) throw input.error;
 
     const usecase = container.resolve(DeleteUserUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, input.data);
 
     const response = ResponseFormatter.success(data);
 
