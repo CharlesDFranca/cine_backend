@@ -13,6 +13,7 @@ import { MovieObservation } from "../../domain/value-objects/MovieObservation";
 import { MovieRating } from "../../domain/value-objects/MovieRating";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { Movie } from "../../domain/entities/Movie";
+import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 
 type CreateMovieInput = {
   title: string;
@@ -65,7 +66,10 @@ export class CreateMovieUseCase
     const user = await this.userRepository.findById(movieUserId);
 
     if (!user) {
-      throw new Error("O usuário não existe");
+      throw new UserNotFoundError("O usuário não existe", {
+        errorClass: this.constructor.name,
+        userId: movieUserId.value,
+      });
     }
     const movie = Movie.create({
       title: movieTitle,
@@ -82,7 +86,6 @@ export class CreateMovieUseCase
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-    console.log(movie.userId.value);
 
     await this.movieUniquenessCheckerService.check(movie, async (movie) =>
       this.movieRepository.exitsByTitleAndShowtime(movie),

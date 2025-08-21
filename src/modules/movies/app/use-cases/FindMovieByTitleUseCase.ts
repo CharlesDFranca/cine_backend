@@ -3,6 +3,7 @@ import { inject, injectable } from "tsyringe";
 import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
 import { Movie } from "../../domain/entities/Movie";
 import { MovieTitle } from "../../domain/value-objects/MovieTitle";
+import { MovieNotFoundError } from "../errors/MovieNotFoundError";
 
 type FindMovieByTitleInput = {
   title: string;
@@ -25,7 +26,10 @@ export class FindMovieByTitleUseCase
 
     const movie = await this.movieRepository.findByTitle(movieTitle);
     if (!movie) {
-      throw new Error("O filme não foi cadastrado");
+      throw new MovieNotFoundError("O filme não foi cadastrado", {
+        errorClass: this.constructor.name,
+        title: movieTitle.value,
+      });
     }
     return { movie };
   }
