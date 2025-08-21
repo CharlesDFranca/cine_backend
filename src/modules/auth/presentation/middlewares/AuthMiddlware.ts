@@ -1,23 +1,24 @@
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
 import { JWTTokenProvider } from "../../infra/services/JWTTokenProvider";
+import { UnauthorizedError } from "../../app/errors/UnauthorizedError";
+import { MissingAuthHeaderError } from "../../app/errors/MissigAuthHeaderError";
+import { MalformedAuthHeaderError } from "../../app/errors/MalformedAuthHeaderError";
 
 export class AuthMiddleware {
   private constructor() {}
 
   static auth(req: Request, res: Response, next: NextFunction) {
-    console.log("Pelo menos ta sendo chamado?");
-
     const authHeader = req.headers.authorization;
 
     if (!authHeader) {
-      throw new Error("Os cabeçalhos não fora providos");
+      throw new MissingAuthHeaderError();
     }
 
     const [scheme, token] = authHeader.split(" ");
 
     if (!(scheme === "Bearer") || !token) {
-      throw new Error("Cabeçalho mal formatado");
+      throw new MalformedAuthHeaderError();
     }
 
     try {
@@ -28,7 +29,7 @@ export class AuthMiddleware {
 
       next();
     } catch {
-      throw new Error("Usuário não autorizado");
+      throw new UnauthorizedError();
     }
   }
 }
