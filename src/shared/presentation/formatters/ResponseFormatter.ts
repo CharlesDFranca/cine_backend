@@ -10,7 +10,7 @@ export type ErrorResponse = {
   code: string;
   type: "Validation" | "Domain" | "Application" | "Infrastructure" | "Internal";
   message: string;
-  details?: unknown;
+  details?: Record<string, unknown>;
 };
 
 export class ResponseFormatter {

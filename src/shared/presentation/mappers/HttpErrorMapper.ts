@@ -14,6 +14,7 @@ export class HttpErrorMapper {
         code: (error as BaseError).code ?? "DOMAIN_ERROR",
         type: "Domain",
         message: error.message,
+        details: error.details,
       };
     }
 
@@ -22,6 +23,7 @@ export class HttpErrorMapper {
         code: (error as BaseError).code ?? "APPLICATION_ERROR",
         type: "Application",
         message: error.message,
+        details: error.details,
       };
     }
 
@@ -30,7 +32,7 @@ export class HttpErrorMapper {
         code: (error as BaseError).code ?? "INFRA_ERROR",
         type: "Infrastructure",
         message: error.message,
-        details: (error as any).original ?? undefined,
+        details: error.details,
       };
     }
 
@@ -39,7 +41,7 @@ export class HttpErrorMapper {
         code: "VALIDATION_ERROR",
         type: "Validation",
         message: error.message,
-        details: error.name,
+        details: {},
       };
     }
 
