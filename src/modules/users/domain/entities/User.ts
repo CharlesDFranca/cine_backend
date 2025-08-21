@@ -23,12 +23,6 @@ export class User extends Entity {
   static create(props: UserProps): User {
     const userId = Id.generate();
 
-    if (props.createdAt.getTime() > props.updatedAt.getTime()) {
-      throw new Error(
-        "A data de criação não pode estar a frente da data de atualização",
-      );
-    }
-
     return new User(userId, props);
   }
 

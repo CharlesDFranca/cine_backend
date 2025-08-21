@@ -2,6 +2,7 @@ import { IUseCase } from "@/shared/app/contracts/IUseCase";
 import { IUserRepository } from "../../domain/repositories/IUserRepository";
 import { inject, injectable } from "tsyringe";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { UserNotFoundError } from "../errors/UserNotFoundError";
 
 type FindUserByIdInput = { userId: string };
 type FindUserByIdOutput = {
@@ -26,7 +27,9 @@ export class FindUserByIdUseCase
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new UserNotFoundError("Usuário não encontrado", {
+        userId: userId.value,
+      });
     }
 
     return {

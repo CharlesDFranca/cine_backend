@@ -5,8 +5,9 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { UserName } from "../../domain/value-objects/UserName";
 import { UserEmail } from "../../domain/value-objects/UserEmail";
 import { UserPassword } from "../../domain/value-objects/UserPassword";
-import { IHashProvider } from "../contracts/IHashProvider";
 import { IUserEmailUniquenessCheckerService } from "../../domain/services/contracts/IUserEmailUniquenessCheckerService";
+import { IHashProvider } from "@/modules/auth/app/contracts/IHashProvider";
+import { UserNotFoundError } from "../errors/UserNotFoundError";
 
 type UpdateUserInput = {
   userId: string;
@@ -35,7 +36,9 @@ export class UpdateUserUseCase
     const user = await this.userRepository.findById(userId);
 
     if (!user) {
-      throw new Error("Usuário não encontrado");
+      throw new UserNotFoundError("Usuário não encontrado", {
+        userId: userId.value,
+      });
     }
 
     if (input.email && user.email.value !== input.email) {
@@ -54,7 +57,7 @@ export class UpdateUserUseCase
 
     if (input.password) {
       const hashedPassword = await this.hashProvider.hash(input.password);
-      
+
       user.updatePassword(
         UserPassword.restore({ value: hashedPassword, isHashed: true }),
       );

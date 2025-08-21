@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type UserEmailProps = { value: string };
@@ -11,12 +12,15 @@ export class UserEmail extends ValueObject<UserEmailProps> {
     const email = props.value.trim().toLocaleLowerCase();
 
     if (!email) {
-      throw new Error("O email não pode ser vazio");
+      throw new InvalidValueObject("O email não pode ser vazio");
     }
 
     if (email.includes("..")) {
-      throw new Error(
-        `O email não pode conter conter pontos consecutivos: ${email}`,
+      throw new InvalidValueObject(
+        `O email não pode conter conter pontos consecutivos`,
+        {
+          email,
+        },
       );
     }
 
@@ -24,7 +28,9 @@ export class UserEmail extends ValueObject<UserEmailProps> {
       /^(?!.*\.\.)(?!\.)([a-zA-Z0-9._%+-]*[a-zA-Z0-9_%+-])@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/;
 
     if (!EMAIL_REGEX.test(email)) {
-      throw new Error(`O email está em um formato inválido: ${email}`);
+      throw new InvalidValueObject(`O email está em um formato inválido`, {
+        email,
+      });
     }
 
     return new UserEmail({ value: email });
