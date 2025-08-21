@@ -8,6 +8,7 @@ import { MovieRating } from "../value-objects/MovieRating.js";
 import { MovieTitle } from "../value-objects/MovieTitle";
 import { Entity } from "@/shared/domain/entities/Entity";
 import { MovieImage } from "../value-objects/MovieImage";
+import { InvalidShowtimeError } from "../errors/InvalidShowtimeError";
 
 type MovieProps = {
   title: MovieTitle;
@@ -37,14 +38,11 @@ export class Movie extends Entity {
     const movieId = Id.generate();
     const now = new Date();
 
-    if (props.createdAt.getTime() > props.updatedAt.getTime()) {
-      throw new Error(
-        "A data de criação não pode estar a frente da data de atualização",
-      );
-    }
-
     if (props.showtime.getTime() < now.getTime()) {
-      throw new Error("A data não pode ser anterior a atual");
+      throw new InvalidShowtimeError("A data não pode ser anterior a atual", {
+        showtime: props.showtime,
+        errorClass: this.constructor.name,
+      });
     }
     return new Movie(movieId, props);
   }

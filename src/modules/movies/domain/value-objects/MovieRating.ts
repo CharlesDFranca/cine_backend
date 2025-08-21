@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieRatingProps = {
@@ -15,11 +16,18 @@ export class MovieRating extends ValueObject<MovieRatingProps> {
     const MIN_RATING = 0;
 
     if (isNaN(Number(rating))) {
-      throw new Error("A avaliação precisa ser númerica");
+      throw new InvalidValueObject("A avaliação precisa ser númerica", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (rating < MIN_RATING || rating > MAX_RATING) {
-      throw new Error("Avaliação Inválida");
+      throw new InvalidValueObject("Avaliação Inválida", {
+        errorClass: this.constructor.name,
+        rating,
+        MIN_RATING,
+        MAX_RATING,
+      });
     }
 
     return new MovieRating({ value: rating });

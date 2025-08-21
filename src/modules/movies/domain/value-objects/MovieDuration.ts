@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieDurationProps = {
@@ -14,11 +15,17 @@ export class MovieDuration extends ValueObject<MovieDurationProps> {
     const MIN_DURATION = 0;
 
     if (isNaN(Number(duration))) {
-      throw new Error("A duração precisa ser um número");
+      throw new InvalidValueObject("A duração precisa ser um número", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (duration < MIN_DURATION) {
-      throw new Error("Duração mínima não atingida");
+      throw new InvalidValueObject("Duração mínima não atingida", {
+        errorClass: this.constructor.name,
+        duration,
+        MIN_DURATION,
+      });
     }
 
     return new MovieDuration({ value: duration });

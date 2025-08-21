@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieTitleProps = {
@@ -13,7 +14,9 @@ export class MovieTitle extends ValueObject<MovieTitleProps> {
     const title = props.value.trim();
 
     if (!title) {
-      throw new Error("O título não pode ser vazio");
+      throw new InvalidValueObject("O título não pode ser vazio", {
+        errorClass: this.constructor.name,
+      });
     }
 
     return new MovieTitle({ value: title });

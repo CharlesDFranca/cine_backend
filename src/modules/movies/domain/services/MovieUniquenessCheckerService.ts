@@ -1,4 +1,5 @@
 import { Movie } from "../entities/Movie";
+import { DuplicateMovieScheduleError } from "../errors/DuplicateMovieScheduleError";
 import { IMovieUniquenessCheckerService } from "./contracts/IMovieUniquenessCheckerService";
 
 export class MovieUniquenessCheckerService
@@ -10,7 +11,14 @@ export class MovieUniquenessCheckerService
   ): Promise<void> {
     const movie = await movieExists(currentMovie);
     if (movie) {
-      throw new Error("O filme já foi registrado na data marcada");
+      throw new DuplicateMovieScheduleError(
+        "O filme já foi registrado na data marcada",
+        {
+          errorClass: this.constructor.name,
+          showtime: currentMovie.showtime,
+          title: currentMovie.title.value,
+        },
+      );
     }
   }
 }

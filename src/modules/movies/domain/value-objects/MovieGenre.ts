@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieGenreProps = {
@@ -28,11 +29,16 @@ export class MovieGenre extends ValueObject<MovieGenreProps> {
     const genre = props.value.trim();
 
     if (!genre) {
-      throw new Error("O genêro não pode ser vazio");
+      throw new InvalidValueObject("O genêro não pode ser vazio", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (!movieGenreTypes.includes(genre)) {
-      throw new Error("Genêro inválido");
+      throw new InvalidValueObject("Genêro inválido", {
+        errorClass: this.constructor.name,
+        genre,
+      });
     }
 
     return new MovieGenre({ value: genre });

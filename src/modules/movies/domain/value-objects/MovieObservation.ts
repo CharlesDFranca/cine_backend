@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieObservationProps = {
@@ -14,11 +15,20 @@ export class MovieObservation extends ValueObject<MovieObservationProps> {
     const MAX_OBSERVATION = 500;
 
     if (!observation) {
-      throw new Error("A observação não pode ser vazia");
+      throw new InvalidValueObject("A observação não pode ser vazia", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (observation.length > MAX_OBSERVATION) {
-      throw new Error("Tamanho máximo permitido da obsevação ultrapassado");
+      throw new InvalidValueObject(
+        "Tamanho máximo permitido da obsevação ultrapassado",
+        {
+          errorClass: this.constructor.name,
+          observation: observation.length,
+          MAX_OBSERVATION,
+        },
+      );
     }
 
     return new MovieObservation({ value: observation });

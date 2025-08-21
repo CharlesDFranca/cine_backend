@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieClassificationProps = {
@@ -15,11 +16,16 @@ export class MovieClassification extends ValueObject<MovieClassificationProps> {
     const classification = props.value;
 
     if (!classification) {
-      throw new Error("A classificação não pode ser vazia");
+      throw new InvalidValueObject("A classificação não pode ser vazia", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (!movieClassificationTypes.includes(classification)) {
-      throw new Error("Classificação Inválida");
+      throw new InvalidValueObject("Classificação Inválida", {
+        errorClass: this.constructor.name,
+        classification,
+      });
     }
 
     return new MovieClassification({ value: classification });

@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MoviePlatformProps = {
@@ -13,7 +14,9 @@ export class MoviePlatform extends ValueObject<MoviePlatformProps> {
     const platform = props.value.trim();
 
     if (!platform) {
-      throw new Error("A classificação não pode ser vazia");
+      throw new InvalidValueObject("A classificação não pode ser vazia", {
+        errorClass: this.constructor.name,
+      });
     }
 
     return new MoviePlatform({ value: platform });

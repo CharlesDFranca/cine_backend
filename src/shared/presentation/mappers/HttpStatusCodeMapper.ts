@@ -16,10 +16,12 @@ export class HttpStatusCodeMapper {
         return 404;
 
       case ErrorCodes.EMAIL_ALREADY_USED:
+      case ErrorCodes.DUPLICATE_MOVIE_SCHEDULE:
         return 409;
 
       case ErrorCodes.INVALID_VALUE_OBJECT:
       case ErrorCodes.INVALID_ENTITY_TIMESTAMPS:
+      case ErrorCodes.INVALID_SHOWTIME:
         return 422;
 
       default:

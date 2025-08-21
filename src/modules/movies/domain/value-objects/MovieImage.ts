@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type MovieImageProps = {
@@ -14,17 +15,26 @@ export class MovieImage extends ValueObject<MovieImageProps> {
     const allowedExtensions = new Set(["jpeg", "png", "webp", "jpg"]);
 
     if (!image) {
-      throw new Error("A imagem não pode estar vazia");
+      throw new InvalidValueObject("A imagem não pode estar vazia", {
+        errorClass: this.constructor.name,
+      });
     }
 
     const imageExtension = image.toLowerCase().match(/\.([a-z0-9]+)$/);
 
     if (!imageExtension) {
-      throw new Error("A URL não possui extensão");
+      throw new InvalidValueObject("A URL não possui extensão", {
+        errorClass: this.constructor.name,
+        image,
+      });
     }
 
     if (!allowedExtensions.has(imageExtension[1])) {
-      throw new Error("A extensão da URL não é permitida");
+      throw new InvalidValueObject("A extensão da URL não é permitida", {
+        errorClass: this.constructor.name,
+        imageExtension: imageExtension[1],
+        allowedExtensions,
+      });
     }
 
     return new MovieImage({ value: image });
