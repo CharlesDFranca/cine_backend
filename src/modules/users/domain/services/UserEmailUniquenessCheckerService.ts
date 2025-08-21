@@ -1,3 +1,4 @@
+import { EmailAlreadyUsedError } from "../errors/EmailAreadyUsedError";
 import { UserEmail } from "../value-objects/UserEmail";
 import { IUserEmailUniquenessCheckerService } from "./contracts/IUserEmailUniquenessCheckerService";
 
@@ -11,7 +12,9 @@ export class UserEmailUniquenessCheckerService
     const emailAlreadyUsed = await userExists(userEmail);
 
     if (emailAlreadyUsed) {
-      throw new Error("O email já está sendo usado");
+      throw new EmailAlreadyUsedError("O email já está sendo usado", {
+        email: userEmail.value,
+      });
     }
   }
 }

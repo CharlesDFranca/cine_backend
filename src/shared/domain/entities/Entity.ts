@@ -1,3 +1,4 @@
+import { InvalidTimestampError } from "../errors/InvalidTimestampError.js";
 import type { Id } from "../value-objects/Id.js";
 
 export abstract class Entity {
@@ -5,7 +6,13 @@ export abstract class Entity {
     private readonly _id: Id,
     private readonly _createdAt: Date,
     private _updatedAt: Date,
-  ) {}
+  ) {
+    if (this._createdAt.getTime() > this._updatedAt.getTime()) {
+      throw new InvalidTimestampError(
+        "A data de criação não pode estar a frente da data de atualização", {}
+      );
+    }
+  }
 
   get id(): Id {
     return this._id;

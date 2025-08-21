@@ -1,3 +1,4 @@
+import { InvalidValueObject } from "@/shared/domain/errors/InvalidValueObject";
 import { ValueObject } from "@/shared/domain/value-objects/ValueObject";
 
 type UserNameProps = {
@@ -14,15 +15,20 @@ export class UserName extends ValueObject<UserNameProps> {
     const name = props.value.trim();
 
     if (!name) {
-      throw new Error("O nome não pode ser vazio");
+      throw new InvalidValueObject("O nome não pode ser vazio");
     }
 
     if (!isNaN(Number(name))) {
-      throw new Error("O nome não pode ser um número");
+      throw new InvalidValueObject("O nome não pode ser um número");
     }
 
     if (name.length < MIN_LENGTH) {
-      throw new Error("O nome não pode ter menos de dois caracteres");
+      throw new InvalidValueObject(
+        "O nome não pode ter menos de dois caracteres",
+        {
+          minLength: MIN_LENGTH,
+        },
+      );
     }
 
     return new UserName({ value: name });

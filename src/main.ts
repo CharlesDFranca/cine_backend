@@ -12,6 +12,7 @@ import { userRoutes } from "./modules/users/presentation/http/routes/userRoutes"
 import { movieRoutes } from "./modules/movies/presentation/http/routes/movieRoutes";
 import { authRoutes } from "./modules/auth/presentation/http/routes/authRoutes";
 import { AuthMiddleware } from "./modules/auth/presentation/middlewares/AuthMiddlware";
+import { ErrorMiddleware } from "./shared/presentation/http/middlewares/ErrorMiddleware";
 
 const app = express();
 
@@ -26,5 +27,7 @@ app.use("/auth", authRoutes);
 
 app.use("/users", AuthMiddleware.auth, userRoutes);
 app.use("/movies", AuthMiddleware.auth, movieRoutes);
+
+app.use(ErrorMiddleware.use);
 
 app.listen(PORT, () => console.log(`App rodando na porta: ${PORT}`));

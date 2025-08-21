@@ -1,5 +1,6 @@
 import { IdGenerator } from "../../utils/IdGenerator.js";
 import type { IIdGenerator } from "../contracts/IIdGenerator.js";
+import { InvalidValueObject } from "../errors/InvalidValueObject.js";
 import { ValueObject } from "./ValueObject.js";
 
 type IdProps = {
@@ -19,14 +20,17 @@ export class Id extends ValueObject<IdProps> {
     const id = props.value.trim();
 
     if (!id) {
-      throw new Error("O ID não pode ser vazio");
+      throw new InvalidValueObject("O ID não pode ser vazio");
     }
 
     const ID_REGEX =
       /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}$/;
 
     if (!ID_REGEX.test(id)) {
-      throw new Error("Formato inválido. O ID precisa ser um UUID");
+      throw new InvalidValueObject(
+        "Formato inválido. O ID precisa ser um UUID",
+        { invalid_id: id },
+      );
     }
 
     return new Id(props);

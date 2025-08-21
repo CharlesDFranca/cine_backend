@@ -18,12 +18,6 @@ export class DeleteUserUseCase
   async execute(input: DeleteUserInput): Promise<void> {
     const userId = Id.refresh({ value: input.userId });
 
-    const user = await this.userRepository.findById(userId);
-
-    if (!user) {
-      throw new Error("Usuário não encontrado");
-    }
-
     await this.userRepository.delete(userId);
   }
 }
