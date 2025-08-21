@@ -1,9 +1,9 @@
+import { MalformedAuthHeaderError } from "@/modules/auth/app/errors/MalformedAuthHeaderError";
+import { MissingAuthHeaderError } from "@/modules/auth/app/errors/MissigAuthHeaderError";
+import { UnauthorizedError } from "@/modules/auth/app/errors/UnauthorizedError";
+import { JWTTokenProvider } from "@/modules/auth/infra/services/JWTTokenProvider";
 import { NextFunction, Request, Response } from "express";
 import { container } from "tsyringe";
-import { JWTTokenProvider } from "../../infra/services/JWTTokenProvider";
-import { UnauthorizedError } from "../../app/errors/UnauthorizedError";
-import { MissingAuthHeaderError } from "../../app/errors/MissigAuthHeaderError";
-import { MalformedAuthHeaderError } from "../../app/errors/MalformedAuthHeaderError";
 
 export class AuthMiddleware {
   private constructor() {}

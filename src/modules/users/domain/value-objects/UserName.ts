@@ -15,11 +15,15 @@ export class UserName extends ValueObject<UserNameProps> {
     const name = props.value.trim();
 
     if (!name) {
-      throw new InvalidValueObject("O nome não pode ser vazio");
+      throw new InvalidValueObject("O nome não pode ser vazio", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (!isNaN(Number(name))) {
-      throw new InvalidValueObject("O nome não pode ser um número");
+      throw new InvalidValueObject("O nome não pode ser um número", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (name.length < MIN_LENGTH) {
@@ -27,6 +31,7 @@ export class UserName extends ValueObject<UserNameProps> {
         "O nome não pode ter menos de dois caracteres",
         {
           minLength: MIN_LENGTH,
+          errorClass: this.constructor.name,
         },
       );
     }

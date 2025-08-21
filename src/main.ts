@@ -11,8 +11,8 @@ import { SwaggerOpenApi } from "./docs/SwaggerOpenApi";
 import { userRoutes } from "./modules/users/presentation/http/routes/userRoutes";
 import { movieRoutes } from "./modules/movies/presentation/http/routes/movieRoutes";
 import { authRoutes } from "./modules/auth/presentation/http/routes/authRoutes";
-import { AuthMiddleware } from "./modules/auth/presentation/middlewares/AuthMiddlware";
 import { ErrorMiddleware } from "./shared/presentation/http/middlewares/ErrorMiddleware";
+import { AuthMiddleware } from "./modules/auth/presentation/http/middlewares/AuthMiddlware";
 
 const app = express();
 

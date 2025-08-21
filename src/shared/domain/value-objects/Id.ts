@@ -20,7 +20,9 @@ export class Id extends ValueObject<IdProps> {
     const id = props.value.trim();
 
     if (!id) {
-      throw new InvalidValueObject("O ID não pode ser vazio");
+      throw new InvalidValueObject("O ID não pode ser vazio", {
+        errorClass: this.constructor.name,
+      });
     }
 
     const ID_REGEX =
@@ -29,7 +31,10 @@ export class Id extends ValueObject<IdProps> {
     if (!ID_REGEX.test(id)) {
       throw new InvalidValueObject(
         "Formato inválido. O ID precisa ser um UUID",
-        { invalid_id: id },
+        {
+          invalidId: id,
+          errorClass: this.constructor.name,
+        },
       );
     }
 

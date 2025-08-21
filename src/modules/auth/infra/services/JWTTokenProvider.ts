@@ -32,10 +32,12 @@ export class JWTTokenProvider implements ITokenProvider {
       if (err instanceof jwt.TokenExpiredError) {
         throw new InvalidTokenError("Token de acesso expirado", {
           reason: "expired",
+          errorClass: this.constructor.name,
         });
       }
       throw new InvalidTokenError("Token de acesso inválido", {
         reason: "malformed",
+        errorClass: this.constructor.name,
       });
     }
   }
@@ -50,10 +52,12 @@ export class JWTTokenProvider implements ITokenProvider {
       if (err instanceof jwt.TokenExpiredError) {
         throw new InvalidTokenError("Refresh token expirado", {
           reason: "expired",
+          errorClass: this.constructor.name,
         });
       }
       throw new InvalidTokenError("Refresh token inválido", {
         reason: "malformed",
+        errorClass: this.constructor.name,
       });
     }
   }

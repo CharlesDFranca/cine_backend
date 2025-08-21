@@ -12,7 +12,9 @@ export class UserEmail extends ValueObject<UserEmailProps> {
     const email = props.value.trim().toLocaleLowerCase();
 
     if (!email) {
-      throw new InvalidValueObject("O email não pode ser vazio");
+      throw new InvalidValueObject("O email não pode ser vazio", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (email.includes("..")) {
@@ -20,6 +22,7 @@ export class UserEmail extends ValueObject<UserEmailProps> {
         `O email não pode conter conter pontos consecutivos`,
         {
           email,
+          errorClass: this.constructor.name,
         },
       );
     }
@@ -30,6 +33,7 @@ export class UserEmail extends ValueObject<UserEmailProps> {
     if (!EMAIL_REGEX.test(email)) {
       throw new InvalidValueObject(`O email está em um formato inválido`, {
         email,
+        errorClass: this.constructor.name,
       });
     }
 

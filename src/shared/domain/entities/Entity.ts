@@ -9,7 +9,10 @@ export abstract class Entity {
   ) {
     if (this._createdAt.getTime() > this._updatedAt.getTime()) {
       throw new InvalidTimestampError(
-        "A data de criação não pode estar a frente da data de atualização", {}
+        "A data de criação não pode estar a frente da data de atualização",
+        {
+          errorClass: this.constructor.name,
+        },
       );
     }
   }

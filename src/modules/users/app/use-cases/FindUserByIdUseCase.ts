@@ -29,6 +29,7 @@ export class FindUserByIdUseCase
     if (!user) {
       throw new UserNotFoundError("Usuário não encontrado", {
         userId: userId.value,
+        errorClass: this.constructor.name,
       });
     }
 

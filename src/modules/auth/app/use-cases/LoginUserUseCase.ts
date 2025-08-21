@@ -43,6 +43,7 @@ export class LoginUserUseCase
       throw new InvalidCredentialsError("Email ou senha inválidos", {
         email: input.email,
         password: input.password,
+        errorClass: this.constructor.name,
       });
     }
 
@@ -55,6 +56,7 @@ export class LoginUserUseCase
       throw new InvalidCredentialsError("Email ou senha inválidos", {
         email: input.email,
         password: input.password,
+        errorClass: this.constructor.name,
       });
     }
 

@@ -14,6 +14,7 @@ export class UserEmailUniquenessCheckerService
     if (emailAlreadyUsed) {
       throw new EmailAlreadyUsedError("O email já está sendo usado", {
         email: userEmail.value,
+        errorClass: this.constructor.name,
       });
     }
   }

@@ -18,7 +18,9 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
     const password = props.value.trim();
 
     if (!password) {
-      throw new InvalidValueObject("A senha não pode ser vazia");
+      throw new InvalidValueObject("A senha não pode ser vazia", {
+        errorClass: this.constructor.name,
+      });
     }
 
     if (isHashed) {
@@ -32,6 +34,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
       throw new InvalidValueObject(`A senha não pode ser tão curta`, {
         minLength: MIN_LENGTH,
         currentLength: password.length,
+        errorClass: this.constructor.name,
       });
     }
 
@@ -39,6 +42,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
       throw new InvalidValueObject(`A senha não pode ser tão longa`, {
         maxLenght: MAX_LENGTH,
         currentLength: password.length,
+        errorClass: this.constructor.name,
       });
     }
 
@@ -49,6 +53,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
         "A senha deve ter pelo menos uma letra minúscula",
         {
           password,
+          errorClass: this.constructor.name,
         },
       );
     }
@@ -60,6 +65,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
         "A senha deve ter pelo menos uma letra maiúscula",
         {
           password,
+          errorClass: this.constructor.name,
         },
       );
     }
@@ -67,7 +73,9 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
     const hasNumber = /\d/;
 
     if (!hasNumber.test(password)) {
-      throw new InvalidValueObject("A senha deve ter pelo menos um número");
+      throw new InvalidValueObject("A senha deve ter pelo menos um número", {
+        errorClass: this.constructor.name,
+      });
     }
 
     const hasSpecialChar = /[^a-zA-Z0-9]/;
@@ -77,6 +85,7 @@ export class UserPassword extends ValueObject<UserPasswordProps> {
         "A senha deve ter pelo menos um caractere especial",
         {
           password,
+          errorClass: this.constructor.name,
         },
       );
     }
