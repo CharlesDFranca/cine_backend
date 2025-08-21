@@ -1,33 +1,20 @@
 import { NextFunction, Request, Response } from "express";
-import {
-  ErrorResponse,
-  ResponseFormatter,
-} from "../../formatters/ResponseFormatter";
+import { ResponseFormatter } from "../../formatters/ResponseFormatter";
+import { HttpStatusCodeMapper } from "../../mappers/HttpStatusCodeMapper";
+import { HttpErrorMapper } from "../../mappers/HttpErrorMapper";
 
 export class ErrorMiddleware {
   private constructor() {}
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-  static use(error: any, req: Request, res: Response, next: NextFunction) {
-    console.error(error);
+  static use(err: any, req: Request, res: Response, next: NextFunction) {
+    const error = err instanceof Error ? err : new Error(String(err));
 
-    const statusCode = error.statusCode || 500;
+    const mappedError = HttpErrorMapper.toErrorResponse(error);
+    const statusCode = HttpStatusCodeMapper.fromCode(mappedError.code);
 
-    const errorResponse: ErrorResponse = {
-      code: statusCode,
-      details: error.details ?? {},
-      message: "Ocorreu um erro",
-      type: "Internal",
-    };
+    const response = ResponseFormatter.error(mappedError);
 
-    return res
-      .status(statusCode)
-      .json(
-        ResponseFormatter.error(
-          errorResponse,
-          {},
-          error.message || "Internal server error.",
-        ),
-      );
+    res.status(statusCode).json(response);
   }
 }
