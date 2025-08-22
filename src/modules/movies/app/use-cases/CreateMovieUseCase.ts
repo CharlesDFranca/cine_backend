@@ -14,10 +14,14 @@ import { MovieRating } from "../../domain/value-objects/MovieRating";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { Movie } from "../../domain/entities/Movie";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
+import {
+  IImageStorageService,
+  ImageInput,
+} from "@/shared/app/contracts/IImageStorageService";
 
 type CreateMovieInput = {
   title: string;
-  image?: string;
+  image?: ImageInput;
   genre: string;
   userId: string;
   classification: string;
@@ -37,6 +41,8 @@ type CreateMovieOutput = {
 export class CreateMovieUseCase
   implements IUseCase<CreateMovieInput, CreateMovieOutput>
 {
+  private uploadedPath: string;
+
   constructor(
     @inject("UserRepository")
     private readonly userRepository: IUserRepository,
@@ -44,25 +50,35 @@ export class CreateMovieUseCase
     private readonly movieRepository: IMoviesRepository,
     @inject("MovieUniquenessCheckerService")
     private readonly movieUniquenessCheckerService: IMovieUniquenessCheckerService,
-  ) {}
+    @inject("ImageStorageService")
+    private readonly imageStorageService: IImageStorageService,
+  ) {
+    this.uploadedPath = "";
+  }
+
   async execute(input: CreateMovieInput): Promise<CreateMovieOutput> {
     const movieTitle = MovieTitle.create({ value: input.title });
-    const movieImage = input.image
-      ? MovieImage.create({ value: input.image })
-      : undefined;
     const movieGenre = MovieGenre.create({ value: input.genre });
     const movieUserId = Id.refresh({ value: input.userId });
+    const moviePlatform = MoviePlatform.create({ value: input.platform });
+    const movieDuration = MovieDuration.create({ value: input.duration });
+
+    const movieImage = input.image
+      ? MovieImage.create({ value: input.image.originalname })
+      : undefined;
+
     const movieClassification = MovieClassification.create({
       value: input.classification,
     });
-    const moviePlatform = MoviePlatform.create({ value: input.platform });
-    const movieDuration = MovieDuration.create({ value: input.duration });
+
     const movieObservation = input.observation
       ? MovieObservation.create({ value: input.observation })
       : undefined;
+
     const movieRating = input.rating
       ? MovieRating.create({ value: input.rating })
       : undefined;
+
     const user = await this.userRepository.findById(movieUserId);
 
     if (!user) {
@@ -71,6 +87,11 @@ export class CreateMovieUseCase
         userId: movieUserId.value,
       });
     }
+
+    if (input.image) {
+      this.uploadedPath = await this.imageStorageService.save(input.image);
+    }
+
     const movie = Movie.create({
       title: movieTitle,
       classification: movieClassification,
@@ -93,5 +114,9 @@ export class CreateMovieUseCase
     await this.movieRepository.save(movie);
 
     return { movieId: movie.id.value };
+  }
+
+  async rollback(): Promise<void> {
+    await this.imageStorageService.delete(this.uploadedPath);
   }
 }

@@ -10,6 +10,7 @@ const envConfigSchema = z.object({
   DATABASE_URL: z.string(),
   ACCESS_TOKEN_SECRET: z.string().min(128).max(128),
   REFRESH_TOKEN_SECRET: z.string().min(128).max(128),
+  STORAGE_DRIVER: z.string().default("disk"),
 });
 
 export interface IEnvConfig {
@@ -44,6 +45,10 @@ class EnvConfig implements IEnvConfig {
 
   getRefreshTokenSecret(): string {
     return this.data.REFRESH_TOKEN_SECRET;
+  }
+
+  getStorageDriver(): string {
+    return this.data.STORAGE_DRIVER;
   }
 }
 

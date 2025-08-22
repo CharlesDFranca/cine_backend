@@ -5,10 +5,6 @@ export const createMovieSchema = z.object({
   title: z
     .string()
     .openapi("Movie Title", { example: "Como Treinar Seu Dragâo" }),
-  image: z
-    .string()
-    .optional()
-    .openapi("Movie Image", { example: "ImageURL.jpg" }),
   genre: z.string().openapi("Movie Genre", { example: "Animação" }),
   userId: z.uuidv4().openapi("Movie User Id", {
     example: "960bb9ae-1700-46aa-9c20-de4866a15653",
