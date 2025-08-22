@@ -11,6 +11,7 @@ import { FindMovieByTitleUseCase } from "@/modules/movies/app/use-cases/FindMovi
 import { DeleteMovieUseCase } from "@/modules/movies/app/use-cases/DeleteMovieUseCase";
 import { ToggleMovieWatchedUseCase } from "@/modules/movies/app/use-cases/ToggleMovieWatchedUseCase";
 import { imageSchema } from "@/shared/presentation/schemas/imageSchema";
+import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
 
 export class MovieControllers {
   private constructor() {}
@@ -23,17 +24,25 @@ export class MovieControllers {
     if (image.error) throw image.error;
 
     const usecase = container.resolve(CreateMovieUseCase);
-    const data = await UseCaseExecutor.run(usecase, {...input.data, image: image.data});
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      image: image.data,
+    });
 
     res.status(201).json(data);
   }
   static async findByTitle(req: Request, res: Response) {
     const input = findMovieByTitleSchema.safeParse(req.body);
+    const userId = findUserByIdSchema.safeParse(req.params);
 
     if (input.error) throw input.error;
+    if (userId.error) throw userId.error;
 
     const usecase = container.resolve(FindMovieByTitleUseCase);
-    const data = await UseCaseExecutor.run(usecase, input.data);
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      ...userId.data,
+    });
 
     res.status(200).json(data);
   }

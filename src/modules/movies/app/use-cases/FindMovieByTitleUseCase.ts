@@ -3,16 +3,16 @@ import { inject, injectable } from "tsyringe";
 import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
 import { Movie } from "../../domain/entities/Movie";
 import { MovieTitle } from "../../domain/value-objects/MovieTitle";
-import { MovieNotFoundError } from "../errors/MovieNotFoundError";
+import { Id } from "@/shared/domain/value-objects/Id";
+import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
+import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 
 type FindMovieByTitleInput = {
   title: string;
+  userId: string;
 };
 
-type FindMovieByTitleOutput = {
-  movie: Movie;
-};
-
+type FindMovieByTitleOutput = Movie[];
 @injectable()
 export class FindMovieByTitleUseCase
   implements IUseCase<FindMovieByTitleInput, FindMovieByTitleOutput>
@@ -20,17 +20,25 @@ export class FindMovieByTitleUseCase
   constructor(
     @inject("MovieRepository")
     private readonly movieRepository: IMoviesRepository,
+    @inject("UserRepository")
+    private readonly userRepository: IUserRepository,
   ) {}
   async execute(input: FindMovieByTitleInput): Promise<FindMovieByTitleOutput> {
     const movieTitle = MovieTitle.create({ value: input.title });
+    const userId = Id.refresh({ value: input.userId });
 
-    const movie = await this.movieRepository.findByTitle(movieTitle);
-    if (!movie) {
-      throw new MovieNotFoundError("O filme não foi cadastrado", {
+    const [user, movies] = await Promise.all([
+      this.userRepository.findById(userId),
+      this.movieRepository.findByTitle(userId, movieTitle),
+    ]);
+
+    if (!user) {
+      throw new UserNotFoundError("O usuário não foi encontrado", {
         errorClass: this.constructor.name,
-        title: movieTitle.value,
+        userId: userId.value,
       });
     }
-    return { movie };
+
+    return movies;
   }
 }
