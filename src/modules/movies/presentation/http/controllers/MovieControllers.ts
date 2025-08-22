@@ -10,45 +10,52 @@ import { UseCaseExecutor } from "@/shared/app/use-cases/UseCaseExecutor";
 import { FindMovieByTitleUseCase } from "@/modules/movies/app/use-cases/FindMovieByTitleUseCase";
 import { DeleteMovieUseCase } from "@/modules/movies/app/use-cases/DeleteMovieUseCase";
 import { ToggleMovieWatchedUseCase } from "@/modules/movies/app/use-cases/ToggleMovieWatchedUseCase";
+import { imageSchema } from "@/shared/presentation/schemas/imageSchema";
 
 export class MovieControllers {
   private constructor() {}
 
   static async create(req: Request, res: Response) {
-    const result = createMovieSchema.safeParse(req.body);
+    const input = createMovieSchema.safeParse(req.body);
+    const image = imageSchema.safeParse(req.file);
 
-    if (result.error) throw result.error;
+    if (input.error) throw input.error;
+    if (image.error) throw image.error;
 
     const usecase = container.resolve(CreateMovieUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, {...input.data, image: image.data});
+
     res.status(201).json(data);
   }
   static async findByTitle(req: Request, res: Response) {
-    const result = findMovieByTitleSchema.safeParse(req.body);
+    const input = findMovieByTitleSchema.safeParse(req.body);
 
-    if (result.error) throw result.error;
+    if (input.error) throw input.error;
 
     const usecase = container.resolve(FindMovieByTitleUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, input.data);
+
     res.status(200).json(data);
   }
 
   static async delete(req: Request, res: Response) {
-    const result = findMovieByIdSchema.safeParse(req.params);
+    const input = findMovieByIdSchema.safeParse(req.params);
 
-    if (result.error) throw result.error;
+    if (input.error) throw input.error;
 
     const usecase = container.resolve(DeleteMovieUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, input.data);
+
     res.status(204).json(data);
   }
   static async toggleWatched(req: Request, res: Response) {
-    const result = findMovieByIdSchema.safeParse(req.params);
+    const input = findMovieByIdSchema.safeParse(req.params);
 
-    if (result.error) throw result.error;
+    if (input.error) throw input.error;
 
     const usecase = container.resolve(ToggleMovieWatchedUseCase);
-    const data = await UseCaseExecutor.run(usecase, result.data);
+    const data = await UseCaseExecutor.run(usecase, input.data);
+
     res.status(204).json(data);
   }
 }
