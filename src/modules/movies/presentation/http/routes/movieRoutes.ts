@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { MovieControllers } from "../controllers/MovieControllers";
 import multer from "multer";
-import { imageUploadConfig } from "@/config/uploads/imageUploadConfig";
+import { imageUploadConfig } from "@/config/uploads-config/imageUploadConfig";
 
 export const movieRoutes = express.Router();
 
