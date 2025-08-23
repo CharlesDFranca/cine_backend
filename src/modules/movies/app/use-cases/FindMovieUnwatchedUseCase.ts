@@ -1,21 +1,20 @@
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
-import { inject, injectable } from "tsyringe";
-import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
 import { Movie } from "../../domain/entities/Movie";
-import { MovieTitle } from "../../domain/value-objects/MovieTitle";
-import { Id } from "@/shared/domain/value-objects/Id";
+import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
+import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
+import { Id } from "@/shared/domain/value-objects/Id";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 
-type FindMovieByTitleInput = {
-  title: string;
+type FindMovieUnwatchedInput = {
   userId: string;
 };
 
-type FindMovieByTitleOutput = Movie[];
+type FindMovieUnwatchedOutput = Movie[];
+
 @injectable()
-export class FindMovieByTitleUseCase
-  implements IUseCase<FindMovieByTitleInput, FindMovieByTitleOutput>
+export class FindMovieUnwatchedUseCase
+  implements IUseCase<FindMovieUnwatchedInput, FindMovieUnwatchedOutput>
 {
   constructor(
     @inject("MovieRepository")
@@ -23,13 +22,14 @@ export class FindMovieByTitleUseCase
     @inject("UserRepository")
     private readonly userRepository: IUserRepository,
   ) {}
-  async execute(input: FindMovieByTitleInput): Promise<FindMovieByTitleOutput> {
-    const movieTitle = MovieTitle.create({ value: input.title });
+  async execute(
+    input: FindMovieUnwatchedInput,
+  ): Promise<FindMovieUnwatchedOutput> {
     const userId = Id.refresh({ value: input.userId });
 
     const [user, movies] = await Promise.all([
       this.userRepository.findById(userId),
-      this.movieRepository.findByTitle(userId, movieTitle),
+      this.movieRepository.findUnwatched(userId),
     ]);
 
     if (!user) {

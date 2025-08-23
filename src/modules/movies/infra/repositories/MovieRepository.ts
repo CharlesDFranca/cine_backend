@@ -22,11 +22,31 @@ export class MovieRepository implements IMoviesRepository {
     return TypeormMovieMapper.toDomain(movie);
   }
 
-  async findByTitle(movieTitle: MovieTitle): Promise<Movie | null> {
-    const movie = await this.repository.findOneBy({ title: movieTitle.value });
-    if (!movie) return null;
+  async findByTitle(userId: Id, movieTitle: MovieTitle): Promise<Movie[]> {
+    const movies = await this.repository.findBy({
+      userId: userId.value,
+      title: movieTitle.value,
+    });
 
-    return TypeormMovieMapper.toDomain(movie);
+    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+  }
+
+  async findWatched(userId: Id): Promise<Movie[]> {
+    const movies = await this.repository.findBy({
+      userId: userId.value,
+      watched: true,
+    });
+
+    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+  }
+
+  async findUnwatched(userId: Id): Promise<Movie[]> {
+    const movies = await this.repository.findBy({
+      userId: userId.value,
+      watched: false,
+    });
+
+    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
   }
 
   async exitsByTitleAndShowtime(movie: Movie): Promise<boolean> {

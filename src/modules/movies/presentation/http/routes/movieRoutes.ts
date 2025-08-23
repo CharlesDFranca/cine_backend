@@ -13,7 +13,7 @@ movieRoutes.post(
   (req: Request, res: Response) => MovieControllers.create(req, res),
 );
 
-movieRoutes.get("/title", (req: Request, res: Response) =>
+movieRoutes.get("/title/:userId", (req: Request, res: Response) =>
   MovieControllers.findByTitle(req, res),
 );
 
@@ -25,4 +25,12 @@ movieRoutes.patch(
   "/toggleWatched/:movieId",
   postImageUpload.single("image"),
   (req: Request, res: Response) => MovieControllers.toggleWatched(req, res),
+);
+
+movieRoutes.get("/watched/:userId", (req: Request, res: Response) =>
+  MovieControllers.findWatched(req, res),
+);
+
+movieRoutes.get("/unwatched/:userId", (req: Request, res: Response) =>
+  MovieControllers.findUnwatched(req, res),
 );

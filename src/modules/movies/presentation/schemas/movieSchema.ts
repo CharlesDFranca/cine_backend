@@ -19,7 +19,10 @@ export const createMovieSchema = z.object({
     .string()
     .optional()
     .openapi("Movie Observation", { example: "Filme muito bom, meu favorito" }),
-  watched: z.coerce.boolean().openapi("Movie Watched", { example: true }),
+  watched: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true")
+    .openapi("Movie Watched", { example: true }),
   rating: z.coerce
     .number()
     .optional()
