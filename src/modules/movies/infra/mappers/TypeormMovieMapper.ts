@@ -15,13 +15,19 @@ export class TypeormMovieMapper {
 
   static toDomain(moviePersisted: MovieEntity): Movie {
     const title = MovieTitle.create({ value: moviePersisted.title });
+
     const genre = MovieGenre.create({ value: moviePersisted.genre });
+
     const duration = MovieDuration.create({
       value: moviePersisted.durationMinutes,
     });
+
     const id = Id.refresh({ value: moviePersisted.id });
+
     const platform = MoviePlatform.create({ value: moviePersisted.platform });
+
     const userId = Id.refresh({ value: moviePersisted.userId });
+
     const classification = MovieClassification.create({
       value: moviePersisted.classification,
     });
@@ -32,7 +38,7 @@ export class TypeormMovieMapper {
       duration,
       userId,
       image: moviePersisted.image
-        ? MovieImage.create({ value: moviePersisted.image })
+        ? MovieImage.restore({ value: moviePersisted.image })
         : undefined,
       observation: moviePersisted.observation
         ? MovieObservation.create({ value: moviePersisted.observation })

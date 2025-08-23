@@ -11,11 +11,20 @@ const envConfigSchema = z.object({
   ACCESS_TOKEN_SECRET: z.string().min(128).max(128),
   REFRESH_TOKEN_SECRET: z.string().min(128).max(128),
   STORAGE_DRIVER: z.string().default("disk"),
+  CLOUDINARY_API_KEY: z.string(),
+  CLOUDINARY_API_SECRET: z.string(),
+  CLOUDINARY_CLOUD_NAME: z.string(),
 });
 
 export interface IEnvConfig {
   getPort(): number;
   getDbUrl(): string;
+  getAccessTokenSecret(): string;
+  getRefreshTokenSecret(): string;
+  getStorageDriver(): string;
+  getCloudinaryApiKey(): string;
+  getCloudinaryApiSecret(): string;
+  getCloudinaryCloudName(): string;
 }
 
 class EnvConfig implements IEnvConfig {
@@ -49,6 +58,18 @@ class EnvConfig implements IEnvConfig {
 
   getStorageDriver(): string {
     return this.data.STORAGE_DRIVER;
+  }
+
+  getCloudinaryApiKey(): string {
+    return this.data.CLOUDINARY_API_KEY;
+  }
+
+  getCloudinaryApiSecret(): string {
+    return this.data.CLOUDINARY_API_SECRET;
+  }
+
+  getCloudinaryCloudName(): string {
+    return this.data.CLOUDINARY_CLOUD_NAME;
   }
 }
 

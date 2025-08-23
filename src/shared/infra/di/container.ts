@@ -4,12 +4,13 @@ import "@/modules/auth/infra/di/container";
 
 import { container } from "tsyringe";
 import { IImageStorageService } from "@/shared/app/contracts/IImageStorageService";
-import { DiskStorageService } from "../services/DiskImageStorageService";
+//import { DiskStorageService } from "../services/DiskImageStorageService";
 import { IImageCompressorService } from "@/shared/app/contracts/IImageCompressorService";
 import { SharpImageCompressorService } from "../services/SharpImageCompressor";
+import { CloudinaryStorageService } from "../services/CloudinaryImageStorageService";
 
 container.register<IImageStorageService>("ImageStorageService", {
-  useClass: DiskStorageService,
+  useClass: CloudinaryStorageService,
 });
 
 container.register<IImageCompressorService>("ImageCompressorService", {

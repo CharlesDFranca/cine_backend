@@ -6,4 +6,5 @@ export type ImageCompressorProps = {
 export interface IImageCompressorService {
   process(fileProps: ImageCompressorProps): Promise<void>;
   processMultiple(filesProps: ImageCompressorProps[]): Promise<void>;
+  compressToBuffer(buffer: Buffer): Promise<Buffer>;
 }

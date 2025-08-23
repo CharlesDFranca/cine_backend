@@ -40,6 +40,10 @@ export class MovieImage extends ValueObject<MovieImageProps> {
     return new MovieImage({ value: image });
   }
 
+  static restore(props: MovieImageProps) {
+    return new MovieImage(props);
+  }
+
   get value() {
     return this.props.value;
   }
