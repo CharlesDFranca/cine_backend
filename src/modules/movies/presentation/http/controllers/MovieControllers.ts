@@ -12,6 +12,7 @@ import { DeleteMovieUseCase } from "@/modules/movies/app/use-cases/DeleteMovieUs
 import { ToggleMovieWatchedUseCase } from "@/modules/movies/app/use-cases/ToggleMovieWatchedUseCase";
 import { imageSchema } from "@/shared/presentation/schemas/imageSchema";
 import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
+import { FindMovieWatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieWatchedUseCase";
 
 export class MovieControllers {
   private constructor() {}
@@ -43,6 +44,17 @@ export class MovieControllers {
       ...input.data,
       ...userId.data,
     });
+
+    res.status(200).json(data);
+  }
+
+  static async findWatched(req: Request, res: Response) {
+    const userId = findUserByIdSchema.safeParse(req.params);
+
+    if (userId.error) throw userId.error;
+
+    const usecase = container.resolve(FindMovieWatchedUseCase);
+    const data = await UseCaseExecutor.run(usecase, userId.data);
 
     res.status(200).json(data);
   }

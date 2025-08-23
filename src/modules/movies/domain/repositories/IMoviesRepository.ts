@@ -9,4 +9,6 @@ export interface IMoviesRepository {
   exitsByTitleAndShowtime(movie: Movie): Promise<boolean>;
   update(movie: Movie): Promise<void>;
   delete(movieId: Id): Promise<void>;
+  findWatched(userId: Id): Promise<Movie[]>;
+  findUnwatched(userId: Id): Promise<Movie[]>;
 }

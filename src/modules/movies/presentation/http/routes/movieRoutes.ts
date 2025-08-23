@@ -26,3 +26,7 @@ movieRoutes.patch(
   postImageUpload.single("image"),
   (req: Request, res: Response) => MovieControllers.toggleWatched(req, res),
 );
+
+movieRoutes.get("/watched/:userId", (req: Request, res: Response) =>
+  MovieControllers.findWatched(req, res),
+);

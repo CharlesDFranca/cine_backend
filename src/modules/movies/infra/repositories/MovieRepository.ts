@@ -31,6 +31,24 @@ export class MovieRepository implements IMoviesRepository {
     return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
   }
 
+  async findWatched(userId: Id): Promise<Movie[]> {
+    const movies = await this.repository.findBy({
+      userId: userId.value,
+      watched: true,
+    });
+
+    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+  }
+
+  async findUnwatched(userId: Id): Promise<Movie[]> {
+    const movies = await this.repository.findBy({
+      userId: userId.value,
+      watched: false,
+    });
+
+    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+  }
+
   async exitsByTitleAndShowtime(movie: Movie): Promise<boolean> {
     const movieExists = await this.repository.findOneBy({
       title: movie.title.value,
