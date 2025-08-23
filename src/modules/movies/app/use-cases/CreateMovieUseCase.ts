@@ -63,10 +63,6 @@ export class CreateMovieUseCase
     const moviePlatform = MoviePlatform.create({ value: input.platform });
     const movieDuration = MovieDuration.create({ value: input.duration });
 
-    const movieImage = input.image
-      ? MovieImage.create({ value: input.image.originalname })
-      : undefined;
-
     const movieClassification = MovieClassification.create({
       value: input.classification,
     });
@@ -91,6 +87,10 @@ export class CreateMovieUseCase
     if (input.image) {
       this.uploadedPath = await this.imageStorageService.save(input.image);
     }
+
+    const movieImage = input.image
+      ? MovieImage.create({ value: this.uploadedPath })
+      : undefined;
 
     const movie = Movie.create({
       title: movieTitle,
