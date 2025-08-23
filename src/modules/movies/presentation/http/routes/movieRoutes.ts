@@ -30,3 +30,7 @@ movieRoutes.patch(
 movieRoutes.get("/watched/:userId", (req: Request, res: Response) =>
   MovieControllers.findWatched(req, res),
 );
+
+movieRoutes.get("/unwatched/:userId", (req: Request, res: Response) =>
+  MovieControllers.findUnwatched(req, res),
+);
