@@ -85,12 +85,11 @@ export class CreateMovieUseCase
     }
 
     if (input.image) {
+      MovieImage.create({ value: input.image.originalname });
       this.uploadedPath = await this.imageStorageService.save(input.image);
     }
 
-    const movieImage = input.image
-      ? MovieImage.create({ value: this.uploadedPath })
-      : undefined;
+    const movieImage = MovieImage.restore({ value: this.uploadedPath });
 
     const movie = Movie.create({
       title: movieTitle,
@@ -111,6 +110,7 @@ export class CreateMovieUseCase
     await this.movieUniquenessCheckerService.check(movie, async (movie) =>
       this.movieRepository.exitsByTitleAndShowtime(movie),
     );
+
     await this.movieRepository.save(movie);
 
     return { movieId: movie.id.value };

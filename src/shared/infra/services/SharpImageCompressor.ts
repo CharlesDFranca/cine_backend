@@ -17,4 +17,11 @@ export class SharpImageCompressorService implements IImageCompressorService {
   async processMultiple(filesProps: ImageCompressorProps[]): Promise<void> {
     await Promise.all(filesProps.map((fileProps) => this.process(fileProps)));
   }
+
+  async compressToBuffer(buffer: Buffer): Promise<Buffer> {
+    return await sharp(buffer)
+      .resize({ width: 600 })
+      .webp({ quality: 60 })
+      .toBuffer();
+  }
 }
