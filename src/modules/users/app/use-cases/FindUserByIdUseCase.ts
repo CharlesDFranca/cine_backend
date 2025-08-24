@@ -6,6 +6,7 @@ import { UserNotFoundError } from "../errors/UserNotFoundError";
 
 type FindUserByIdInput = { userId: string };
 type FindUserByIdOutput = {
+  userId: string;
   name: string;
   email: string;
   createdAt: Date;
@@ -34,6 +35,7 @@ export class FindUserByIdUseCase
     }
 
     return {
+      userId: user.id.value,
       name: user.name.value,
       email: user.email.value,
       createdAt: user.createdAt,
