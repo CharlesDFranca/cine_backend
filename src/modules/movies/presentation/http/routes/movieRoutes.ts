@@ -17,6 +17,10 @@ movieRoutes.get("/title/:userId", (req: Request, res: Response) =>
   MovieControllers.findByTitle(req, res),
 );
 
+movieRoutes.get("/:userId", (req: Request, res: Response) =>
+  MovieControllers.findByUserId(req, res),
+);
+
 movieRoutes.delete("/:movieId", (req: Request, res: Response) =>
   MovieControllers.delete(req, res),
 );

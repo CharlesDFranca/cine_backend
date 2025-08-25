@@ -1,4 +1,4 @@
-import { Request, response, Response } from "express";
+import { Request, Response } from "express";
 import {
   createMovieSchema,
   findMovieByIdSchema,
@@ -15,6 +15,7 @@ import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSch
 import { FindMovieWatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieWatchedUseCase";
 import { FindMovieUnwatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieUnwatchedUseCase";
 import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
+import { FindMoviesByUserIdUseCase } from "@/modules/movies/app/use-cases/FindMoviesByUserIdUseCase";
 
 export class MovieControllers {
   private constructor() {}
@@ -35,6 +36,7 @@ export class MovieControllers {
 
     res.status(201).json(response);
   }
+
   static async findByTitle(req: Request, res: Response) {
     const input = findMovieByTitleSchema.safeParse(req.body);
     const userId = findUserByIdSchema.safeParse(req.params);
@@ -47,6 +49,18 @@ export class MovieControllers {
       ...input.data,
       ...userId.data,
     });
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
+  }
+
+  static async findByUserId(req: Request, res: Response) {
+    const input = findUserByIdSchema.safeParse(req.params);
+
+    if (input.error) throw input.error;
+
+    const usecase = container.resolve(FindMoviesByUserIdUseCase);
+    const data = await UseCaseExecutor.run(usecase, input.data);
     const response = ResponseFormatter.success(data);
 
     res.status(200).json(response);
