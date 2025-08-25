@@ -50,7 +50,58 @@ export class Movie extends Entity {
   static restore(movieId: Id, props: MovieProps) {
     return new Movie(movieId, props);
   }
+  //#region update methods
+  updateTitle(title: MovieTitle) {
+    this.props.title = title;
+    this.touch();
+  }
 
+  updateImage(image: MovieImage | undefined) {
+    this.props.image = image;
+    this.touch();
+  }
+
+  updateGenre(genre: MovieGenre) {
+    this.props.genre = genre;
+    this.touch();
+  }
+
+  updateClassification(classification: MovieClassification) {
+    this.props.classification = classification;
+    this.touch();
+  }
+
+  updatePlatform(platform: MoviePlatform) {
+    this.props.platform = platform;
+    this.touch();
+  }
+
+  updateShowtime(showtime: Date) {
+    this.props.showtime = showtime;
+    this.touch();
+  }
+
+  updateDuration(duration: MovieDuration) {
+    this.props.duration = duration;
+    this.touch();
+  }
+
+  updateObservation(observation: MovieObservation | undefined) {
+    this.props.observation = observation;
+    this.touch();
+  }
+
+  updateWatched(watched: boolean) {
+    this.props.watched = watched;
+    this.touch();
+  }
+
+  updateRating(rating: MovieRating | undefined) {
+    this.props.rating = rating;
+    this.touch();
+  }
+
+  //#endregion
   //#region getters
   get title() {
     return this.props.title;

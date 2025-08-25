@@ -3,6 +3,7 @@ import {
   createMovieSchema,
   findMovieByIdSchema,
   findMovieByTitleSchema,
+  updateMovieSchema,
 } from "../../schemas/movieSchema";
 import { container } from "tsyringe";
 import { CreateMovieUseCase } from "@/modules/movies/app/use-cases/CreateMovieUseCase";
@@ -16,6 +17,7 @@ import { FindMovieWatchedUseCase } from "@/modules/movies/app/use-cases/FindMovi
 import { FindMovieUnwatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieUnwatchedUseCase";
 import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
 import { FindMoviesByUserIdUseCase } from "@/modules/movies/app/use-cases/FindMoviesByUserIdUseCase";
+import { UpdateMovieUseCase } from "@/modules/movies/app/use-cases/UpdateMovieUseCase";
 
 export class MovieControllers {
   private constructor() {}
@@ -111,5 +113,24 @@ export class MovieControllers {
     const response = ResponseFormatter.success(data);
 
     res.status(204).json(response);
+  }
+  static async update(req: Request, res: Response) {
+    const input = updateMovieSchema.safeParse(req.body);
+    const image = imageSchema.safeParse(req.file);
+    const userId = findUserByIdSchema.safeParse(req.params);
+
+    if (userId.error) throw userId.error;
+    if (input.error) throw input.error;
+    if (image.error) throw image.error;
+
+    const usecase = container.resolve(UpdateMovieUseCase);
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      image: image.data,
+      ...userId.data,
+    });
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 }
