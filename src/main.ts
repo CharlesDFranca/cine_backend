@@ -2,6 +2,7 @@ import "reflect-metadata";
 
 import { envConfig } from "./config/env/EnvConfig";
 import express from "express";
+import cors from "cors";
 import swaggerUi from "swagger-ui-express";
 
 import "@/shared/infra/di/container";
@@ -17,6 +18,7 @@ import { AuthMiddleware } from "./modules/auth/presentation/http/middlewares/Aut
 const app = express();
 
 app.use(express.json());
+app.use(cors());
 
 const PORT = envConfig.getPort();
 
