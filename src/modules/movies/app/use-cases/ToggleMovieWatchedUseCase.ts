@@ -32,10 +32,13 @@ export class ToggleMovieWatchedUseCase
         movieId: movieId.value,
       });
     }
-    // eslint-disable-next-line @typescript-eslint/no-unused-expressions
-    movie.watched
-      ? this.movieWatchedService.markAsUnwatched(movie)
-      : this.movieWatchedService.markAsWatched(movie);
+
+    if (movie.watched) {
+      this.movieWatchedService.markAsUnwatched(movie);
+    } else {
+      this.movieWatchedService.markAsWatched(movie);
+    }
+
     await this.movieRepository.update(movie);
   }
 }

@@ -1,16 +1,17 @@
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
-import { Movie } from "../../domain/entities/Movie";
 import { IMoviesRepository } from "../../domain/repositories/IMoviesRepository";
 import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
+import { MovieDetailsDto } from "../dtos/MovieDtos";
+import { MovieMapper } from "../mappers/MovieMapper";
 
 type FindMovieUnwatchedInput = {
   userId: string;
 };
 
-type FindMovieUnwatchedOutput = Movie[];
+type FindMovieUnwatchedOutput = MovieDetailsDto[];
 
 @injectable()
 export class FindMovieUnwatchedUseCase
@@ -39,6 +40,6 @@ export class FindMovieUnwatchedUseCase
       });
     }
 
-    return movies;
+    return movies.map((movie) => MovieMapper.toDetailsDto(movie));
   }
 }
