@@ -25,10 +25,8 @@ movieRoutes.delete("/:movieId", (req: Request, res: Response) =>
   MovieControllers.delete(req, res),
 );
 
-movieRoutes.patch(
-  "/toggleWatched/:movieId",
-  postImageUpload.single("image"),
-  (req: Request, res: Response) => MovieControllers.toggleWatched(req, res),
+movieRoutes.patch("/toggleWatched/:movieId", (req: Request, res: Response) =>
+  MovieControllers.toggleWatched(req, res),
 );
 
 movieRoutes.get("/watched/:userId", (req: Request, res: Response) =>
@@ -37,4 +35,8 @@ movieRoutes.get("/watched/:userId", (req: Request, res: Response) =>
 
 movieRoutes.get("/unwatched/:userId", (req: Request, res: Response) =>
   MovieControllers.findUnwatched(req, res),
+);
+
+movieRoutes.put("/:userId", (req: Request, res: Response) =>
+  MovieControllers.update(req, res),
 );

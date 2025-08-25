@@ -61,6 +61,7 @@ export class MovieRepository implements IMoviesRepository {
     const movieExists = await this.repository.findOneBy({
       title: movie.title.value,
       showtime: movie.showtime,
+      userId: movie.userId.value,
     });
 
     return !!movieExists;
