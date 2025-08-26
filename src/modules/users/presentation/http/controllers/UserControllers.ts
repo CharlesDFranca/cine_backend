@@ -14,7 +14,7 @@ export class UserControllers {
   private constructor() {}
 
   static async findById(req: Request, res: Response) {
-    const input = findUserByIdSchema.safeParse(req.params);
+    const input = findUserByIdSchema.safeParse(req.user);
 
     if (!input.success) throw input.error;
 
@@ -28,7 +28,7 @@ export class UserControllers {
 
   static async update(req: Request, res: Response) {
     const inputUpdateData = updateUserSchema.safeParse(req.body);
-    const inputUserId = findUserByIdSchema.safeParse(req.params);
+    const inputUserId = findUserByIdSchema.safeParse(req.user);
 
     if (!inputUpdateData.success) throw inputUpdateData.error;
     if (!inputUserId.success) throw inputUserId.error;
@@ -45,7 +45,7 @@ export class UserControllers {
   }
 
   static async delete(req: Request, res: Response) {
-    const input = findUserByIdSchema.safeParse(req.params);
+    const input = findUserByIdSchema.safeParse(req.user);
 
     if (!input.success) throw input.error;
 

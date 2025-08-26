@@ -3,14 +3,14 @@ import { UserControllers } from "../controllers/UserControllers";
 
 export const userRoutes = express.Router();
 
-userRoutes.get("/:userId", (req: Request, res: Response) =>
+userRoutes.get("/me", (req: Request, res: Response) =>
   UserControllers.findById(req, res),
 );
 
-userRoutes.delete("/:userId", (req: Request, res: Response) =>
+userRoutes.delete("/me", (req: Request, res: Response) =>
   UserControllers.delete(req, res),
 );
 
-userRoutes.put("/:userId", (req: Request, res: Response) =>
+userRoutes.put("/me", (req: Request, res: Response) =>
   UserControllers.update(req, res),
 );
