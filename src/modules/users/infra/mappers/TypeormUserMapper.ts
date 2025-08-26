@@ -21,6 +21,7 @@ export class TypeormUserMappper {
       email,
       name,
       password,
+      isEmailConfirmed: userPersistedData.isEmailConfirmed,
       createdAt: userPersistedData.createdAt,
       updatedAt: userPersistedData.updatedAt,
     });
@@ -32,6 +33,7 @@ export class TypeormUserMappper {
       name: user.name.value,
       email: user.email.value,
       password: user.password.value,
+      isEmailConfirmed: user.isEmailConfirmed,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
     };

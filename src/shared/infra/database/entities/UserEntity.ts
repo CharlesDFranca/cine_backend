@@ -24,6 +24,9 @@ export class UserEntity {
   @Column({ type: "varchar" })
   password!: string;
 
+  @Column({ type: "boolean", default: false })
+  isEmailConfirmed!: boolean;
+
   @OneToMany(() => MovieEntity, (movie) => movie.user)
   movies?: MovieEntity[];
 
