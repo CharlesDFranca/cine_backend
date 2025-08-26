@@ -6,6 +6,7 @@ import { AppDataSource } from "@/shared/infra/database/TypeormClient";
 import { MovieEntity } from "@/shared/infra/database/entities/MovieEntity";
 import { TypeormMovieMapper } from "../mappers/TypeormMovieMapper";
 import { injectable } from "tsyringe";
+import { SortCriteria, SortDirection } from "../../domain/types/MovieTypes";
 
 @injectable()
 export class MovieRepository implements IMoviesRepository {
@@ -22,9 +23,13 @@ export class MovieRepository implements IMoviesRepository {
     return TypeormMovieMapper.toDomain(movie);
   }
 
-  async findByUserId(userId: Id): Promise<Movie[]> {
-    const movies = await this.repository.findBy({
-      userId: userId.value,
+  async findByUserId(
+    userId: Id,
+    orderBy: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]> {
+    const movies = await this.repository.find({
+      where: { userId: userId.value },
+      order: orderBy,
     });
 
     return movies.map((movie) => TypeormMovieMapper.toDomain(movie));

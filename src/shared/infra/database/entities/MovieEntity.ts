@@ -43,7 +43,7 @@ export class MovieEntity {
   showtime!: Date;
 
   @Column({ name: "durationMinutes", type: "int" })
-  durationMinutes!: number;
+  duration!: number;
 
   @Column({ type: "text", nullable: true })
   observation?: string;

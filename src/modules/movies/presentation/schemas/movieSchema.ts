@@ -84,3 +84,14 @@ export const isWatchedMovieSchema = z.object({
     .optional()
     .openapi("Movie Watched", { example: true }),
 });
+
+export const orderMovieBySchema = z
+  .object({
+    title: z.enum(["ASC", "DESC"]).optional(),
+    duration: z.enum(["ASC", "DESC"]).optional(),
+    showtime: z.enum(["ASC", "DESC"]).optional(),
+  })
+  .openapi("Movie Order Criteria", {
+    example: { title: "ASC", showtime: "DESC" },
+  })
+  .optional();

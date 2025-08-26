@@ -4,6 +4,7 @@ import {
   findMovieByIdSchema,
   findMovieByTitleSchema,
   isWatchedMovieSchema,
+  orderMovieBySchema,
   updateMovieSchema,
 } from "../../schemas/movieSchema";
 import { container } from "tsyringe";
@@ -61,11 +62,16 @@ export class MovieControllers {
 
   static async findByUserId(req: Request, res: Response) {
     const input = findUserByIdSchema.safeParse(req.user);
+    const orderBy = orderMovieBySchema.safeParse(req.body);
 
     if (input.error) throw input.error;
+    if (orderBy.error) throw orderBy.error;
 
     const usecase = container.resolve(FindMoviesByUserIdUseCase);
-    const data = await UseCaseExecutor.run(usecase, input.data);
+    const data = await UseCaseExecutor.run(usecase, {
+      userId: input.data.userId,
+      orderBy: orderBy.data,
+    });
     const response = ResponseFormatter.success(data);
 
     res.status(200).json(response);

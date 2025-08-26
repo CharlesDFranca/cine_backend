@@ -19,7 +19,7 @@ export class TypeormMovieMapper {
     const genre = MovieGenre.create({ value: moviePersisted.genre });
 
     const duration = MovieDuration.create({
-      value: moviePersisted.durationMinutes,
+      value: moviePersisted.duration,
     });
 
     const id = Id.refresh({ value: moviePersisted.id });
@@ -59,7 +59,7 @@ export class TypeormMovieMapper {
     return {
       title: movie.title.value,
       createdAt: movie.createdAt,
-      durationMinutes: movie.duration.value,
+      duration: movie.duration.value,
       genre: movie.genre.value,
       id: movie.id.value,
       image: movie.image?.value,
