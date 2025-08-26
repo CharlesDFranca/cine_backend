@@ -44,6 +44,7 @@ export class Movie extends Entity {
         errorClass: this.constructor.name,
       });
     }
+
     return new Movie(movieId, props);
   }
 
@@ -77,6 +78,13 @@ export class Movie extends Entity {
   }
 
   updateShowtime(showtime: Date) {
+    if (showtime.getTime() < new Date().getTime()) {
+      throw new InvalidShowtimeError("A data não pode ser anterior a atual", {
+        showtime,
+        errorClass: this.constructor.name,
+      });
+    }
+
     this.props.showtime = showtime;
     this.touch();
   }

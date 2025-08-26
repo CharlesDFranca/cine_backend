@@ -37,6 +37,8 @@ movieRoutes.get("/unwatched/:userId", (req: Request, res: Response) =>
   MovieControllers.findUnwatched(req, res),
 );
 
-movieRoutes.put("/:userId", (req: Request, res: Response) =>
-  MovieControllers.update(req, res),
+movieRoutes.put(
+  "/:userId",
+  postImageUpload.single("image"),
+  (req: Request, res: Response) => MovieControllers.update(req, res),
 );

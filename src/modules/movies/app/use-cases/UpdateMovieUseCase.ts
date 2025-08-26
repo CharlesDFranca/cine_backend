@@ -18,6 +18,7 @@ import {
   ImageInput,
 } from "@/shared/app/contracts/IImageStorageService";
 import { MovieNotFoundError } from "../errors/MovieNotFoundError";
+import { UnauthorizedError } from "@/modules/auth/app/errors/UnauthorizedError";
 
 type UpdateMovieInput = {
   title?: string;
@@ -43,6 +44,7 @@ export class UpdateMovieUseCase
   implements IUseCase<UpdateMovieInput, UpdateMovieOutput>
 {
   private uploadedPath: string;
+  private oldImagePath: string | undefined;
 
   constructor(
     @inject("UserRepository")
@@ -55,11 +57,24 @@ export class UpdateMovieUseCase
     private readonly imageStorageService: IImageStorageService,
   ) {
     this.uploadedPath = "";
+    this.oldImagePath = "";
   }
 
   async execute(input: UpdateMovieInput): Promise<UpdateMovieOutput> {
+    const userId = Id.refresh({ value: input.userId });
     const movieId = Id.refresh({ value: input.movieId });
-    const movie = await this.movieRepository.findById(movieId);
+
+    const [user, movie] = await Promise.all([
+      this.userRepository.findById(userId),
+      this.movieRepository.findById(movieId),
+    ]);
+
+    if (!user) {
+      throw new UserNotFoundError("O usuário não existe", {
+        errorClass: this.constructor.name,
+        userId: userId.value,
+      });
+    }
 
     if (!movie) {
       throw new MovieNotFoundError("O filme não foi cadastrado", {
@@ -68,85 +83,76 @@ export class UpdateMovieUseCase
       });
     }
 
-    const movieTitle = input.title
-      ? MovieTitle.create({ value: input.title })
-      : undefined;
-    const movieGenre = input.genre
-      ? MovieGenre.create({ value: input.genre })
-      : undefined;
-    const moviePlatform = input.platform
-      ? MoviePlatform.create({ value: input.platform })
-      : undefined;
-    const movieDuration = input.duration
-      ? MovieDuration.create({ value: input.duration })
-      : undefined;
-
-    const movieUserId = Id.refresh({ value: input.userId });
-
-    const movieClassification = input.classification
-      ? MovieClassification.create({
-          value: input.classification,
-        })
-      : undefined;
-
-    const movieObservation = input.observation
-      ? MovieObservation.create({ value: input.observation })
-      : undefined;
-
-    const movieRating = input.rating
-      ? MovieRating.create({ value: input.rating })
-      : undefined;
-
-    const user = await this.userRepository.findById(movieUserId);
-
-    if (!user) {
-      throw new UserNotFoundError("O usuário não existe", {
+    if (!movie.userId.equals(user.id)) {
+      throw new UnauthorizedError({
         errorClass: this.constructor.name,
-        userId: movieUserId.value,
+        userId: userId.value,
+        movieId: movieId.value,
       });
     }
 
-    if (input.image) {
-      MovieImage.create({ value: input.image.originalname });
-      this.uploadedPath = await this.imageStorageService.save(input.image);
-
-      if (movie.image) {
-        await this.imageStorageService.delete(movie.image.value);
-      }
+    if (input.title) {
+      movie.updateTitle(MovieTitle.create({ value: input.title }));
     }
 
-    const movieImage = MovieImage.restore({ value: this.uploadedPath });
+    if (input.showtime) {
+      movie.updateShowtime(input.showtime);
+    }
 
-    movie.updateTitle(movieTitle ?? movie.title);
+    if (input.title || input.showtime) {
+      await this.movieUniquenessCheckerService.check(movie, async (movie) =>
+        this.movieRepository.exitsByTitleAndShowtime(movie),
+      );
+    }
 
-    movie.updateImage(movieImage ?? movie.image);
+    if (input.genre) {
+      movie.updateGenre(MovieGenre.create({ value: input.genre }));
+    }
 
-    movie.updateGenre(movieGenre ?? movie.genre);
+    if (input.platform) {
+      movie.updatePlatform(MoviePlatform.create({ value: input.platform }));
+    }
 
-    movie.updateClassification(movieClassification ?? movie.classification);
+    if (input.duration !== undefined) {
+      movie.updateDuration(MovieDuration.create({ value: input.duration }));
+    }
 
-    movie.updatePlatform(moviePlatform ?? movie.platform);
+    if (input.classification) {
+      movie.updateClassification(
+        MovieClassification.create({ value: input.classification }),
+      );
+    }
 
-    movie.updateShowtime(input.showtime ?? movie.showtime);
+    if (input.observation) {
+      movie.updateObservation(
+        MovieObservation.create({ value: input.observation }),
+      );
+    }
 
-    movie.updateDuration(movieDuration ?? movie.duration);
+    if (input.rating !== undefined) {
+      movie.updateRating(MovieRating.create({ value: input.rating }));
+    }
 
-    movie.updateObservation(movieObservation ?? movie.observation);
+    if (input.watched !== undefined) {
+      movie.updateWatched(input.watched);
+    }
 
-    movie.updateWatched(input.watched ?? movie.watched);
-
-    movie.updateRating(movieRating ?? movie.rating);
-
-    await this.movieUniquenessCheckerService.check(movie, async (movie) =>
-      this.movieRepository.exitsByTitleAndShowtime(movie),
-    );
+    if (input.image) {
+      this.uploadedPath = await this.imageStorageService.save(input.image);
+      this.oldImagePath = movie.image?.value;
+      movie.updateImage(MovieImage.restore({ value: this.uploadedPath }));
+    }
 
     await this.movieRepository.update(movie);
+
+    if (this.oldImagePath)
+      await this.imageStorageService.delete(this.oldImagePath);
 
     return { movieId: movie.id.value };
   }
 
   async rollback(): Promise<void> {
-    await this.imageStorageService.delete(this.uploadedPath);
+    if (this.uploadedPath)
+      await this.imageStorageService.delete(this.uploadedPath);
   }
 }
