@@ -4,18 +4,19 @@ import { inject, injectable } from "tsyringe";
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { Id } from "@/shared/domain/value-objects/Id";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
-import { MovieDetailsDto } from "../dtos/MovieDtos";
 import { MovieMapper } from "../mappers/MovieMapper";
+import { MovieDetailsDto } from "../dtos/MovieDtos";
 
-type FindMovieUnwatchedInput = {
+type FilterMovieByWatchedInput = {
   userId: string;
+  watched: boolean;
 };
 
-type FindMovieUnwatchedOutput = MovieDetailsDto[];
+type FilterMovieByWatchedOutput = MovieDetailsDto[];
 
 @injectable()
-export class FindMovieUnwatchedUseCase
-  implements IUseCase<FindMovieUnwatchedInput, FindMovieUnwatchedOutput>
+export class FilterMovieByWatchedUseCase
+  implements IUseCase<FilterMovieByWatchedInput, FilterMovieByWatchedOutput>
 {
   constructor(
     @inject("MovieRepository")
@@ -24,13 +25,13 @@ export class FindMovieUnwatchedUseCase
     private readonly userRepository: IUserRepository,
   ) {}
   async execute(
-    input: FindMovieUnwatchedInput,
-  ): Promise<FindMovieUnwatchedOutput> {
+    input: FilterMovieByWatchedInput,
+  ): Promise<FilterMovieByWatchedOutput> {
     const userId = Id.refresh({ value: input.userId });
 
     const [user, movies] = await Promise.all([
       this.userRepository.findById(userId),
-      this.movieRepository.findUnwatched(userId),
+      this.movieRepository.filterByWatched(userId, input.watched),
     ]);
 
     if (!user) {

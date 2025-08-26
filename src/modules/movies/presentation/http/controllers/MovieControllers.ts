@@ -3,6 +3,7 @@ import {
   createMovieSchema,
   findMovieByIdSchema,
   findMovieByTitleSchema,
+  isWatchedMovieSchema,
   updateMovieSchema,
 } from "../../schemas/movieSchema";
 import { container } from "tsyringe";
@@ -13,8 +14,7 @@ import { DeleteMovieUseCase } from "@/modules/movies/app/use-cases/DeleteMovieUs
 import { ToggleMovieWatchedUseCase } from "@/modules/movies/app/use-cases/ToggleMovieWatchedUseCase";
 import { imageSchema } from "@/shared/presentation/schemas/imageSchema";
 import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
-import { FindMovieWatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieWatchedUseCase";
-import { FindMovieUnwatchedUseCase } from "@/modules/movies/app/use-cases/FindMovieUnwatchedUseCase";
+import { FilterMovieByWatchedUseCase } from "@/modules/movies/app/use-cases/FilterMovieByWatchedUseCase";
 import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
 import { FindMoviesByUserIdUseCase } from "@/modules/movies/app/use-cases/FindMoviesByUserIdUseCase";
 import { UpdateMovieUseCase } from "@/modules/movies/app/use-cases/UpdateMovieUseCase";
@@ -25,14 +25,17 @@ export class MovieControllers {
   static async create(req: Request, res: Response) {
     const input = createMovieSchema.safeParse(req.body);
     const image = imageSchema.safeParse(req.file);
+    const userId = findUserByIdSchema.safeParse(req.user);
 
     if (input.error) throw input.error;
     if (image.error) throw image.error;
+    if (userId.error) throw userId.error;
 
     const usecase = container.resolve(CreateMovieUseCase);
     const data = await UseCaseExecutor.run(usecase, {
       ...input.data,
       image: image.data,
+      ...userId.data,
     });
     const response = ResponseFormatter.success(data);
 
@@ -40,8 +43,8 @@ export class MovieControllers {
   }
 
   static async findByTitle(req: Request, res: Response) {
-    const input = findMovieByTitleSchema.safeParse(req.body);
-    const userId = findUserByIdSchema.safeParse(req.params);
+    const input = findMovieByTitleSchema.safeParse(req.query);
+    const userId = findUserByIdSchema.safeParse(req.user);
 
     if (input.error) throw input.error;
     if (userId.error) throw userId.error;
@@ -57,7 +60,7 @@ export class MovieControllers {
   }
 
   static async findByUserId(req: Request, res: Response) {
-    const input = findUserByIdSchema.safeParse(req.params);
+    const input = findUserByIdSchema.safeParse(req.user);
 
     if (input.error) throw input.error;
 
@@ -68,25 +71,18 @@ export class MovieControllers {
     res.status(200).json(response);
   }
 
-  static async findWatched(req: Request, res: Response) {
-    const userId = findUserByIdSchema.safeParse(req.params);
+  static async fiterByWatched(req: Request, res: Response) {
+    const userId = findUserByIdSchema.safeParse(req.user);
+    const input = isWatchedMovieSchema.safeParse(req.query);
 
     if (userId.error) throw userId.error;
+    if (input.error) throw input.error;
 
-    const usecase = container.resolve(FindMovieWatchedUseCase);
-    const data = await UseCaseExecutor.run(usecase, userId.data);
-    const response = ResponseFormatter.success(data);
-
-    res.status(200).json(response);
-  }
-
-  static async findUnwatched(req: Request, res: Response) {
-    const userId = findUserByIdSchema.safeParse(req.params);
-
-    if (userId.error) throw userId.error;
-
-    const usecase = container.resolve(FindMovieUnwatchedUseCase);
-    const data = await UseCaseExecutor.run(usecase, userId.data);
+    const usecase = container.resolve(FilterMovieByWatchedUseCase);
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      ...userId.data,
+    });
     const response = ResponseFormatter.success(data);
 
     res.status(200).json(response);
@@ -118,7 +114,7 @@ export class MovieControllers {
   static async update(req: Request, res: Response) {
     const input = updateMovieSchema.safeParse(req.body);
     const image = imageSchema.safeParse(req.file);
-    const userId = findUserByIdSchema.safeParse(req.params);
+    const userId = findUserByIdSchema.safeParse(req.user);
 
     if (userId.error) throw userId.error;
     if (input.error) throw input.error;

@@ -12,4 +12,5 @@ export interface IMoviesRepository {
   delete(movieId: Id): Promise<void>;
   findWatched(userId: Id): Promise<Movie[]>;
   findUnwatched(userId: Id): Promise<Movie[]>;
+  filterByWatched(userId: Id, watched: boolean): Promise<Movie[]>;
 }
