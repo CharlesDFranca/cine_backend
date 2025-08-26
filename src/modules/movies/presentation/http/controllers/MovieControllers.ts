@@ -114,6 +114,7 @@ export class MovieControllers {
 
     res.status(204).json(response);
   }
+
   static async update(req: Request, res: Response) {
     const input = updateMovieSchema.safeParse(req.body);
     const image = imageSchema.safeParse(req.file);
