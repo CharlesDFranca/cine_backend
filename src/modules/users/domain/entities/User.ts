@@ -8,6 +8,7 @@ type UserProps = {
   name: UserName;
   email: UserEmail;
   password: UserPassword;
+  isEmailConfirmed: boolean;
   createdAt: Date;
   updatedAt: Date;
 };
@@ -20,10 +21,13 @@ export class User extends Entity {
     super(userId, props.createdAt, props.updatedAt);
   }
 
-  static create(props: UserProps): User {
+  static create(props: Omit<UserProps, "isEmailConfirmed">): User {
     const userId = Id.generate();
 
-    return new User(userId, props);
+    return new User(userId, {
+      ...props,
+      isEmailConfirmed: false,
+    });
   }
 
   static restore(id: Id, props: UserProps): User {
@@ -42,6 +46,10 @@ export class User extends Entity {
     return this.props.password;
   }
 
+  get isEmailConfirmed(): boolean {
+    return !!this.props.isEmailConfirmed;
+  }
+
   updateName(name: UserName) {
     this.props.name = name;
     this.touch();
@@ -54,6 +62,11 @@ export class User extends Entity {
 
   updatePassword(password: UserPassword) {
     this.props.password = password;
+    this.touch();
+  }
+
+  confirmEmail() {
+    this.props.isEmailConfirmed = true;
     this.touch();
   }
 }
