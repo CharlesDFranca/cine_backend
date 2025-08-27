@@ -6,8 +6,10 @@ import { UserName } from "@/modules/users/domain/value-objects/UserName";
 import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword";
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
 import { inject, injectable } from "tsyringe";
-import { ITokenProvider } from "../contracts/ITokenProvider";
 import { IHashProvider } from "../contracts/IHashProvider";
+import { IEmailVerificationCodeService } from "../../domain/services/contratcs/IEmailVerificationCodeService";
+import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
+import { IEmailService } from "@/shared/app/contracts/IEmailService";
 
 type RegisterUserInput = {
   name: string;
@@ -16,8 +18,7 @@ type RegisterUserInput = {
 };
 
 type RegisterUserOutput = {
-  accessToken: string;
-  refreshToken: string;
+  message: string;
 };
 
 @injectable()
@@ -29,10 +30,14 @@ export class RegisterUserUseCase
     private readonly userRepository: IUserRepository,
     @inject("HashProvider")
     private readonly hashProvider: IHashProvider,
-    @inject("TokenProvider")
-    private readonly tokenProvider: ITokenProvider,
     @inject("UserEmailUniquenessCheckerService")
     private readonly userEmailUniquenessCheckerService: IUserEmailUniquenessCheckerService,
+    @inject("EmailVerificationCodeService")
+    private readonly emailVerificationCodeService: IEmailVerificationCodeService,
+    @inject("CodeVerificationService")
+    private readonly codeVerificationService: ICodeVerificationService,
+    @inject("EmailService")
+    private readonly emailService: IEmailService,
   ) {}
 
   async execute(input: RegisterUserInput): Promise<RegisterUserOutput> {
@@ -57,12 +62,15 @@ export class RegisterUserUseCase
       updatedAt: new Date(),
     });
 
+    const code = this.emailVerificationCodeService.generate();
+
     await this.userRepository.save(user);
 
-    const { accessToken, refreshToken } = this.tokenProvider.generate({
-      userId: user.id.value,
-    });
+    await this.codeVerificationService.saveCode(user.email, code, 900);
+    this.emailService.sendVerificationEmail(user.email.value, `${code}`);
 
-    return { accessToken, refreshToken };
+    return {
+      message: "Por favor, verifique seu email e insira o código de validaçõa.",
+    };
   }
 }

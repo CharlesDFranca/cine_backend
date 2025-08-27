@@ -1,7 +1,7 @@
-import { Id } from "@/shared/domain/value-objects/Id";
+import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
 
 export interface ICodeVerificationService {
-  saveCode(userId: Id, code: number, ttlSeconds: number): Promise<void>;
-  getCode(userId: Id): Promise<string | null>;
-  deleteCode(userId: Id): Promise<void>;
+  saveCode(email: UserEmail, code: number, ttlSeconds: number): Promise<void>;
+  getCode(email: UserEmail): Promise<string | null>;
+  deleteCode(email: UserEmail): Promise<void>;
 }

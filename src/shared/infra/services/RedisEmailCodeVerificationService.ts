@@ -1,25 +1,29 @@
 import { ICodeVerificationService } from "@/modules/auth/domain/services/contratcs/ICodeVerificationService";
-import { Id } from "@/shared/domain/value-objects/Id";
 import { redisClient } from "../redis/redisClient";
 import { injectable } from "tsyringe";
+import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
 
 @injectable()
 export class RedisEmailCodeVerificationService
   implements ICodeVerificationService
 {
-  async saveCode(userId: Id, code: number, ttlSeconds: number): Promise<void> {
+  async saveCode(
+    email: UserEmail,
+    code: number,
+    ttlSeconds: number,
+  ): Promise<void> {
     await redisClient.setEx(
-      `email:verification:${userId.value}`,
+      `email:verification:${email.value}`,
       ttlSeconds,
       `${code}`,
     );
   }
 
-  async getCode(userId: Id): Promise<string | null> {
-    return await redisClient.get(`email:verification:${userId.value}`);
+  async getCode(email: UserEmail): Promise<string | null> {
+    return await redisClient.get(`email:verification:${email.value}`);
   }
 
-  async deleteCode(userId: Id) {
-    await redisClient.del(`email:verification:${userId.value}`);
+  async deleteCode(email: UserEmail) {
+    await redisClient.del(`email:verification:${email.value}`);
   }
 }
