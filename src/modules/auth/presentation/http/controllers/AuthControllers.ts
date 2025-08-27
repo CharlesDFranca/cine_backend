@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import {
+  findUserByEmailSchema,
   loginUserSchema,
   refreshTokenSchema,
   registerUserSchema,
@@ -11,6 +12,7 @@ import { UseCaseExecutor } from "@/shared/app/use-cases/UseCaseExecutor";
 import { LoginUserUseCase } from "@/modules/auth/app/use-cases/LoginUserUseCase";
 import { RefreshTokenUseCase } from "@/modules/auth/app/use-cases/RefreshTokenUseCase";
 import { ValidateEmailCodeUseCase } from "@/modules/auth/app/use-cases/ValidateEmailCodeUseCase";
+import { ResendValidateCodeUseCase } from "@/modules/auth/app/use-cases/ResendValidateCodeUseCase";
 
 export class AuthControllers {
   private constructor() {}
@@ -54,6 +56,17 @@ export class AuthControllers {
     if (!input.success) throw input.error;
 
     const usecase = container.resolve(ValidateEmailCodeUseCase);
+    const data = await UseCaseExecutor.run(usecase, { ...input.data });
+
+    res.status(200).json(data);
+  }
+
+  static async resendCode(req: Request, res: Response) {
+    const input = findUserByEmailSchema.safeParse(req.body);
+
+    if (!input.success) throw input.error;
+
+    const usecase = container.resolve(ResendValidateCodeUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
     res.status(200).json(data);

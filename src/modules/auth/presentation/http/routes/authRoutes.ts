@@ -18,3 +18,7 @@ authRoutes.post("/refreshToken", (req: Request, res: Response) =>
 authRoutes.post("/validate-email", (req: Request, res: Response) =>
   AuthControllers.validateEmailCode(req, res),
 );
+
+authRoutes.post("/resend-code", (req: Request, res: Response) =>
+  AuthControllers.resendCode(req, res),
+);
