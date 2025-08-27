@@ -7,7 +7,7 @@ import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword"
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
 import { inject, injectable } from "tsyringe";
 import { IHashProvider } from "../contracts/IHashProvider";
-import { IEmailVerificationCodeService } from "../../domain/services/contratcs/IEmailVerificationCodeService";
+import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 
@@ -33,8 +33,8 @@ export class RegisterUserUseCase
     private readonly hashProvider: IHashProvider,
     @inject("UserEmailUniquenessCheckerService")
     private readonly userEmailUniquenessCheckerService: IUserEmailUniquenessCheckerService,
-    @inject("EmailVerificationCodeService")
-    private readonly emailVerificationCodeService: IEmailVerificationCodeService,
+    @inject("VerificationCodeGeneratorService")
+    private readonly verificationCodeGeneratorService: IVerificationCodeGeneratorService,
     @inject("CodeVerificationService")
     private readonly codeVerificationService: ICodeVerificationService,
     @inject("EmailService")
@@ -63,7 +63,7 @@ export class RegisterUserUseCase
       updatedAt: new Date(),
     });
 
-    const code = this.emailVerificationCodeService.generate();
+    const code = this.verificationCodeGeneratorService.generate();
 
     await this.userRepository.save(user);
 

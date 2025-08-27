@@ -36,14 +36,15 @@ export class NodemailerEmailService implements IEmailService {
     });
   }
 
-  async sendPasswordResetEmail(to: string, token: string): Promise<void> {
+  async sendPasswordResetEmail(to: string, code: string): Promise<void> {
     await this.transporter.sendMail({
       from: `"MinhaApp" <${envConfig.getSMTPEmail()}>`,
       to,
       subject: "Recupere sua senha",
       html: `
         <p>Use o link abaixo para redefinir sua senha:</p>
-        <a href="http://localhost:3000/reset-password?token=${token}">
+        <p>Seu código de verificação é: <b>${code}</b></p>
+        <a href="http://localhost:3000/reset-password?token=${code}">
           Redefinir senha
         </a>
       `,

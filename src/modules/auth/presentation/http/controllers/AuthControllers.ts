@@ -13,6 +13,7 @@ import { RefreshTokenUseCase } from "@/modules/auth/app/use-cases/RefreshTokenUs
 import { ValidateEmailCodeUseCase } from "@/modules/auth/app/use-cases/ValidateEmailCodeUseCase";
 import { ResendValidateCodeUseCase } from "@/modules/auth/app/use-cases/ResendValidateCodeUseCase";
 import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
+import { RequestPasswordResetUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetUseCase";
 
 export class AuthControllers {
   private constructor() {}
@@ -67,6 +68,17 @@ export class AuthControllers {
     if (!input.success) throw input.error;
 
     const usecase = container.resolve(ResendValidateCodeUseCase);
+    const data = await UseCaseExecutor.run(usecase, { ...input.data });
+
+    res.status(200).json(data);
+  }
+
+  static async requestPasswordReset(req: Request, res: Response) {
+    const input = findUserByIdSchema.safeParse(req.user);
+
+    if (!input.success) throw input.error;
+
+    const usecase = container.resolve(RequestPasswordResetUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
     res.status(200).json(data);

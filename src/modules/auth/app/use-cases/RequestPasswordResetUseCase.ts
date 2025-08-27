@@ -1,23 +1,23 @@
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
-import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
+import { Id } from "@/shared/domain/value-objects/Id";
 import { inject, injectable } from "tsyringe";
-import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
+import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
-import { Id } from "@/shared/domain/value-objects/Id";
+import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 
-type ResendValidateCodeInput = {
+type RequestPasswordResetInput = {
   userId: string;
 };
 
-type ResendValidateCodeOutput = {
+type RequestPasswordResetOutput = {
   message: string;
 };
 
 @injectable()
-export class ResendValidateCodeUseCase
-  implements IUseCase<ResendValidateCodeInput, ResendValidateCodeOutput>
+export class RequestPasswordResetUseCase
+  implements IUseCase<RequestPasswordResetInput, RequestPasswordResetOutput>
 {
   constructor(
     @inject("UserRepository")
@@ -31,8 +31,8 @@ export class ResendValidateCodeUseCase
   ) {}
 
   async execute(
-    input: ResendValidateCodeInput,
-  ): Promise<ResendValidateCodeOutput> {
+    input: RequestPasswordResetInput,
+  ): Promise<RequestPasswordResetOutput> {
     const userId = Id.refresh({ value: input.userId });
 
     const user = await this.userRepository.findById(userId);
@@ -44,16 +44,16 @@ export class ResendValidateCodeUseCase
       });
     }
 
-    const key = `email-verification:${user.id.value}`;
-
-    await this.codeVerificationService.deleteCode(key);
-
     const code = this.verificationCodeGeneratorService.generate();
 
-    await this.codeVerificationService.saveCode(key, code, 900);
+    await this.codeVerificationService.saveCode(
+      `reset-password:${user.id.value}`,
+      code,
+      900,
+    );
 
-    this.emailService.sendVerificationEmail(user.email.value, `${code}`);
+    this.emailService.sendPasswordResetEmail(user.email.value, `${code}`);
 
-    return { message: "Código enviado. Por favor, verifique." };
+    return { message: "Um código foi enviado ao seu email." };
   }
 }
