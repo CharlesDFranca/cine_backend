@@ -16,6 +16,7 @@ import { ResendValidateCodeUseCase } from "@/modules/auth/app/use-cases/ResendVa
 import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
 import { RequestPasswordResetUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetUseCase";
 import { PasswordResetUseCase } from "@/modules/auth/app/use-cases/PasswordResetUseCase";
+import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
 
 export class AuthControllers {
   private constructor() {}
@@ -28,7 +29,9 @@ export class AuthControllers {
     const usecase = container.resolve(RegisterUserUseCase);
     const data = await UseCaseExecutor.run(usecase, input.data);
 
-    res.status(201).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(201).json(response);
   }
 
   static async login(req: Request, res: Response) {
@@ -39,7 +42,9 @@ export class AuthControllers {
     const usecase = container.resolve(LoginUserUseCase);
     const data = await UseCaseExecutor.run(usecase, input.data);
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 
   static async refresh(req: Request, res: Response) {
@@ -50,7 +55,9 @@ export class AuthControllers {
     const usecase = container.resolve(RefreshTokenUseCase);
     const data = await UseCaseExecutor.run(usecase, input.data);
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 
   static async validateEmailCode(req: Request, res: Response) {
@@ -61,7 +68,9 @@ export class AuthControllers {
     const usecase = container.resolve(ValidateEmailCodeUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 
   static async resendCode(req: Request, res: Response) {
@@ -72,7 +81,9 @@ export class AuthControllers {
     const usecase = container.resolve(ResendValidateCodeUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 
   static async requestPasswordReset(req: Request, res: Response) {
@@ -83,7 +94,9 @@ export class AuthControllers {
     const usecase = container.resolve(RequestPasswordResetUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 
   static async resetPassword(req: Request, res: Response) {
@@ -99,6 +112,8 @@ export class AuthControllers {
       ...userId.data,
     });
 
-    res.status(200).json(data);
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
   }
 }
