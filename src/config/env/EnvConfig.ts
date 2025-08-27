@@ -7,17 +7,27 @@ const envConfigSchema = z.object({
     .int("O valor da porta precisa ser um inteiro")
     .transform((n) => (Number(n) > 0 ? n : 3000))
     .default(3000),
+
   DATABASE_URL: z.string(),
+
   ACCESS_TOKEN_SECRET: z.string().min(128).max(128),
   REFRESH_TOKEN_SECRET: z.string().min(128).max(128),
+
   STORAGE_DRIVER: z.string().default("disk"),
+
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
+
   REDIS_HOST: z.string(),
   REDIS_PASSWORD: z.string(),
   REDIS_USERNAME: z.string(),
   REDIS_PORT: z.coerce.number(),
+
+  SMTP_HOST: z.string(),
+  SMTP_PORT: z.coerce.number(),
+  SMTP_EMAIL: z.email(),
+  SMTP_PASS: z.string(),
 });
 
 export interface IEnvConfig {
@@ -33,6 +43,10 @@ export interface IEnvConfig {
   getRedisUser(): string;
   getRedisPassword(): string;
   getRedisPort(): number;
+  getSMTPHost(): string;
+  getSMTPPort(): number;
+  getSMTPEmail(): string;
+  getSMTPPass(): string;
 }
 
 class EnvConfig implements IEnvConfig {
@@ -94,6 +108,22 @@ class EnvConfig implements IEnvConfig {
 
   getRedisPort(): number {
     return this.data.REDIS_PORT;
+  }
+
+  getSMTPHost(): string {
+    return this.data.SMTP_HOST;
+  }
+
+  getSMTPPort(): number {
+    return this.data.SMTP_PORT;
+  }
+
+  getSMTPEmail(): string {
+    return this.data.SMTP_EMAIL;
+  }
+
+  getSMTPPass(): string {
+    return this.data.SMTP_PASS;
   }
 }
 
