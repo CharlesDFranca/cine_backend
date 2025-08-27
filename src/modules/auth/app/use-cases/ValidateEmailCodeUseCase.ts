@@ -3,10 +3,10 @@ import { IUseCase } from "@/shared/app/contracts/IUseCase";
 import { inject, injectable } from "tsyringe";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
-import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
+import { Id } from "@/shared/domain/value-objects/Id";
 
 type ValidateEmailCodeInput = {
-  email: string;
+  userId: string;
   code: string;
 };
 
@@ -28,18 +28,20 @@ export class ValidateEmailCodeUseCase
   async execute(
     input: ValidateEmailCodeInput,
   ): Promise<ValidateEmailCodeOutput> {
-    const email = UserEmail.create({ value: input.email });
+    const userId = Id.refresh({ value: input.userId });
 
-    const user = await this.userRepository.findByEmail(email);
+    const user = await this.userRepository.findById(userId);
 
     if (!user) {
       throw new UserNotFoundError("Usuário não cadastrado", {
         errorClass: this.constructor.name,
-        email: email.value,
+        userId: userId.value,
       });
     }
 
-    const storedCode = await this.codeVerificationService.getCode(user.email);
+    const key = `email-verification:${user.id.value}`;
+
+    const storedCode = await this.codeVerificationService.getCode(key);
 
     if (!storedCode || storedCode !== input.code) {
       throw new Error("Codigo invalido");
@@ -49,7 +51,7 @@ export class ValidateEmailCodeUseCase
 
     await this.userRepository.update(user);
 
-    await this.codeVerificationService.deleteCode(user.email);
+    await this.codeVerificationService.deleteCode(key);
 
     return { message: "Usuário verificado com sucesso" };
   }

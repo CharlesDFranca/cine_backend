@@ -35,9 +35,5 @@ export const refreshTokenSchema = z.object({
 
 export const validateEmailCodeSchema = z.object({
   code: z.string(),
-  email: z.email(),
-});
-
-export const findUserByEmailSchema = z.object({
-  email: z.email(),
+  userId: z.uuidv4(),
 });

@@ -19,6 +19,7 @@ type RegisterUserInput = {
 
 type RegisterUserOutput = {
   message: string;
+  userId: string;
 };
 
 @injectable()
@@ -66,11 +67,17 @@ export class RegisterUserUseCase
 
     await this.userRepository.save(user);
 
-    await this.codeVerificationService.saveCode(user.email, code, 900);
+    await this.codeVerificationService.saveCode(
+      `email-verification:${user.id.value}`,
+      code,
+      900,
+    );
+
     this.emailService.sendVerificationEmail(user.email.value, `${code}`);
 
     return {
       message: "Por favor, verifique seu email e insira o código de validaçõa.",
+      userId: user.id.value,
     };
   }
 }
