@@ -37,3 +37,9 @@ export const validateEmailCodeSchema = z.object({
   code: z.string(),
   userId: z.uuidv4(),
 });
+
+export const resetPasswordSchema = z.object({
+  code: z.string(),
+  oldPassword: z.string(),
+  newPassword: z.string(),
+});

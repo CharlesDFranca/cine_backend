@@ -3,6 +3,7 @@ import {
   loginUserSchema,
   refreshTokenSchema,
   registerUserSchema,
+  resetPasswordSchema,
   validateEmailCodeSchema,
 } from "../../schema/authSchema";
 import { container } from "tsyringe";
@@ -14,6 +15,7 @@ import { ValidateEmailCodeUseCase } from "@/modules/auth/app/use-cases/ValidateE
 import { ResendValidateCodeUseCase } from "@/modules/auth/app/use-cases/ResendValidateCodeUseCase";
 import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
 import { RequestPasswordResetUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetUseCase";
+import { PasswordResetUseCase } from "@/modules/auth/app/use-cases/PasswordResetUseCase";
 
 export class AuthControllers {
   private constructor() {}
@@ -80,6 +82,22 @@ export class AuthControllers {
 
     const usecase = container.resolve(RequestPasswordResetUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
+
+    res.status(200).json(data);
+  }
+
+  static async resetPassword(req: Request, res: Response) {
+    const input = resetPasswordSchema.safeParse(req.body);
+    const userId = findUserByIdSchema.safeParse(req.user);
+
+    if (!input.success) throw input.error;
+    if (!userId.success) throw userId.error;
+
+    const usecase = container.resolve(PasswordResetUseCase);
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      ...userId.data,
+    });
 
     res.status(200).json(data);
   }

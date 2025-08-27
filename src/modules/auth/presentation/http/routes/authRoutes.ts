@@ -30,3 +30,9 @@ authRoutes.get(
   (req: Request, res: Response) =>
     AuthControllers.requestPasswordReset(req, res),
 );
+
+authRoutes.post(
+  "/reset-password",
+  AuthMiddleware.auth,
+  (req: Request, res: Response) => AuthControllers.resetPassword(req, res),
+);
