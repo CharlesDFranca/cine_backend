@@ -6,6 +6,7 @@ import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError"
 import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { envConfig } from "@/config/env/EnvConfig";
 
 type ResendValidateCodeInput = {
   userId: string;
@@ -44,7 +45,7 @@ export class ResendValidateCodeUseCase
       });
     }
 
-    const key = `email-verification:${user.id.value}`;
+    const key = `${envConfig.getVerificationEmailKey()}:${user.id.value}`;
 
     await this.codeVerificationService.deleteCode(key);
 

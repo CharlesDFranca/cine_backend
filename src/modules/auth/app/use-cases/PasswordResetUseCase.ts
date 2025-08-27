@@ -7,6 +7,7 @@ import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword"
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { inject, injectable } from "tsyringe";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
+import { envConfig } from "@/config/env/EnvConfig";
 
 type PasswordResetInput = {
   code: string;
@@ -44,7 +45,7 @@ export class PasswordResetUseCase
       });
     }
 
-    const key = `reset-password:${user.id.value}`;
+    const key = `${envConfig.getResetPasswordKey()}:${user.id.value}`;
 
     const storedCode = await this.codeVerificationService.getCode(key);
 

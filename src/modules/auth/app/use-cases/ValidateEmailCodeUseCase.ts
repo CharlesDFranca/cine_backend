@@ -4,6 +4,7 @@ import { inject, injectable } from "tsyringe";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { Id } from "@/shared/domain/value-objects/Id";
+import { envConfig } from "@/config/env/EnvConfig";
 
 type ValidateEmailCodeInput = {
   userId: string;
@@ -39,7 +40,7 @@ export class ValidateEmailCodeUseCase
       });
     }
 
-    const key = `email-verification:${user.id.value}`;
+    const key = `${envConfig.getVerificationEmailKey()}:${user.id.value}`;
 
     const storedCode = await this.codeVerificationService.getCode(key);
 
