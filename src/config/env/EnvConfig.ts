@@ -14,6 +14,10 @@ const envConfigSchema = z.object({
   CLOUDINARY_API_KEY: z.string(),
   CLOUDINARY_API_SECRET: z.string(),
   CLOUDINARY_CLOUD_NAME: z.string(),
+  REDIS_HOST: z.string(),
+  REDIS_PASSWORD: z.string(),
+  REDIS_USERNAME: z.string(),
+  REDIS_PORT: z.coerce.number(),
 });
 
 export interface IEnvConfig {
@@ -25,6 +29,10 @@ export interface IEnvConfig {
   getCloudinaryApiKey(): string;
   getCloudinaryApiSecret(): string;
   getCloudinaryCloudName(): string;
+  getRedisHost(): string;
+  getRedisUser(): string;
+  getRedisPassword(): string;
+  getRedisPort(): number;
 }
 
 class EnvConfig implements IEnvConfig {
@@ -70,6 +78,22 @@ class EnvConfig implements IEnvConfig {
 
   getCloudinaryCloudName(): string {
     return this.data.CLOUDINARY_CLOUD_NAME;
+  }
+
+  getRedisHost(): string {
+    return this.data.REDIS_HOST;
+  }
+
+  getRedisUser(): string {
+    return this.data.REDIS_USERNAME;
+  }
+
+  getRedisPassword(): string {
+    return this.data.REDIS_PASSWORD;
+  }
+
+  getRedisPort(): number {
+    return this.data.REDIS_PORT;
   }
 }
 
