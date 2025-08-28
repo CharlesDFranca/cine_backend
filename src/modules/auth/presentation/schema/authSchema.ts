@@ -32,3 +32,18 @@ export const loginUserSchema = z.object({
 export const refreshTokenSchema = z.object({
   refreshToken: z.jwt(),
 });
+
+export const resendCodeSchema = z.object({
+  to: z.enum(["email", "password"]),
+});
+
+export const validateEmailCodeSchema = z.object({
+  code: z.string(),
+  userId: z.uuidv4(),
+});
+
+export const resetPasswordSchema = z.object({
+  code: z.string(),
+  oldPassword: z.string(),
+  newPassword: z.string(),
+});

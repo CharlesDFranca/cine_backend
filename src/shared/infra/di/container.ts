@@ -9,7 +9,7 @@ import { IImageCompressorService } from "@/shared/app/contracts/IImageCompressor
 import { SharpImageCompressorService } from "../services/SharpImageCompressor";
 import { CloudinaryStorageService } from "../services/CloudinaryImageStorageService";
 import { ICodeVerificationService } from "@/modules/auth/domain/services/contratcs/ICodeVerificationService";
-import { RedisEmailCodeVerificationService } from "../services/RedisEmailCodeVerificationService";
+import { RedisCodeVerificationService } from "../services/RedisCodeVerificationService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import { NodemailerEmailService } from "../services/NodemailerEmailService";
 
@@ -22,7 +22,7 @@ container.register<IImageCompressorService>("ImageCompressorService", {
 });
 
 container.register<ICodeVerificationService>("CodeVerificationService", {
-  useClass: RedisEmailCodeVerificationService,
+  useClass: RedisCodeVerificationService,
 });
 
 container.register<IEmailService>("EmailService", {

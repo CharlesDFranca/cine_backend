@@ -28,6 +28,10 @@ const envConfigSchema = z.object({
   SMTP_PORT: z.coerce.number(),
   SMTP_EMAIL: z.email(),
   SMTP_PASS: z.string(),
+
+  EXPIRATION_CODE_TIME: z.coerce.number(),
+  RESET_PASSWORD_KEY: z.string(),
+  VERIFICATION_EMAIL_KEY: z.string(),
 });
 
 export interface IEnvConfig {
@@ -47,6 +51,9 @@ export interface IEnvConfig {
   getSMTPPort(): number;
   getSMTPEmail(): string;
   getSMTPPass(): string;
+  getExpirationCodeTime(): number;
+  getResetPasswordKey(): string;
+  getVerificationEmailKey(): string;
 }
 
 class EnvConfig implements IEnvConfig {
@@ -61,7 +68,6 @@ class EnvConfig implements IEnvConfig {
 
     this.data = result.data;
   }
-
   getPort(): number {
     return this.data.PORT;
   }
@@ -124,6 +130,18 @@ class EnvConfig implements IEnvConfig {
 
   getSMTPPass(): string {
     return this.data.SMTP_PASS;
+  }
+
+  getExpirationCodeTime(): number {
+    return this.data.EXPIRATION_CODE_TIME;
+  }
+
+  getResetPasswordKey(): string {
+    return this.data.RESET_PASSWORD_KEY;
+  }
+
+  getVerificationEmailKey(): string {
+    return this.data.VERIFICATION_EMAIL_KEY;
   }
 }
 

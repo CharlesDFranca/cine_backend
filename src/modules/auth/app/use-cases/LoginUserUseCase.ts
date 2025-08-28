@@ -47,6 +47,12 @@ export class LoginUserUseCase
       });
     }
 
+    if (!user.isEmailConfirmed) {
+      throw new Error(
+        "Usuário não verificado. Por favor, verifique o seu e-mail.",
+      );
+    }
+
     const passwordMatch = await this.hashProvider.compare(
       userPassword.value,
       user.password.value,

@@ -3,8 +3,8 @@ import { ITokenProvider } from "../../app/contracts/ITokenProvider";
 import { JWTTokenProvider } from "../services/JWTTokenProvider";
 import { IHashProvider } from "../../app/contracts/IHashProvider";
 import { BcryptHashProvider } from "../services/BcryptHashProvider";
-import { IEmailVerificationCodeService } from "../../domain/services/contratcs/IEmailVerificationCodeService";
-import { EmailVerificationCodeService } from "../../domain/services/EmailVerificationCodeService";
+import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
+import { VerificationCodeGeneratorService } from "../../domain/services/VerificationCodeGenerator";
 
 container.register<ITokenProvider>("TokenProvider", {
   useClass: JWTTokenProvider,
@@ -14,9 +14,9 @@ container.register<IHashProvider>("HashProvider", {
   useClass: BcryptHashProvider,
 });
 
-container.register<IEmailVerificationCodeService>(
-  "EmailVerificationCodeService",
+container.register<IVerificationCodeGeneratorService>(
+  "VerificationCodeGeneratorService",
   {
-    useClass: EmailVerificationCodeService,
+    useClass: VerificationCodeGeneratorService,
   },
 );
