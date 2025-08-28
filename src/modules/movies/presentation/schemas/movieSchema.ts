@@ -6,9 +6,6 @@ export const createMovieSchema = z.object({
     .string()
     .openapi("Movie Title", { example: "Como Treinar Seu Dragâo" }),
   genre: z.string().openapi("Movie Genre", { example: "Animação" }),
-  userId: z.uuidv4().openapi("Movie User Id", {
-    example: "960bb9ae-1700-46aa-9c20-de4866a15653",
-  }),
   classification: z.string().openapi("Movie Classification", { example: "L" }),
   platform: z.string().openapi("Movie Platform", { example: "Prime Video" }),
   showtime: z.coerce
@@ -79,3 +76,22 @@ export const updateMovieSchema = z.object({
     .uuidv4()
     .openapi("Movie Id", { example: "ee520234-e71e-4f8e-b32c-99d8e2eaaff9" }),
 });
+
+export const isWatchedMovieSchema = z.object({
+  watched: z
+    .enum(["true", "false"])
+    .transform((val) => val === "true")
+    .optional()
+    .openapi("Movie Watched", { example: true }),
+});
+
+export const orderMovieBySchema = z
+  .object({
+    title: z.enum(["ASC", "DESC"]).optional(),
+    duration: z.enum(["ASC", "DESC"]).optional(),
+    showtime: z.enum(["ASC", "DESC"]).optional(),
+  })
+  .openapi("Movie Order Criteria", {
+    example: { title: "ASC", showtime: "DESC" },
+  })
+  .optional();
