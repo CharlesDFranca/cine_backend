@@ -3,6 +3,7 @@ import {
   loginUserSchema,
   refreshTokenSchema,
   registerUserSchema,
+  resendCodeSchema,
   resetPasswordSchema,
   validateEmailCodeSchema,
 } from "../../schema/authSchema";
@@ -74,12 +75,17 @@ export class AuthControllers {
   }
 
   static async resendCode(req: Request, res: Response) {
-    const input = findUserByIdSchema.safeParse(req.body);
+    const userId = findUserByIdSchema.safeParse(req.body);
+    const input = resendCodeSchema.safeParse(req.query);
 
+    if (!userId.success) throw userId.error;
     if (!input.success) throw input.error;
 
     const usecase = container.resolve(ResendValidateCodeUseCase);
-    const data = await UseCaseExecutor.run(usecase, { ...input.data });
+    const data = await UseCaseExecutor.run(usecase, {
+      ...userId.data,
+      ...input.data,
+    });
 
     const response = ResponseFormatter.success(data);
 

@@ -1,15 +1,19 @@
 import { IUserRepository } from "@/modules/users/domain/repositories/IUserRepository";
 import { IUseCase } from "@/shared/app/contracts/IUseCase";
-import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
+import {
+  CodeType,
+  ICodeVerificationService,
+} from "../../domain/services/contratcs/ICodeVerificationService";
 import { inject, injectable } from "tsyringe";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import { Id } from "@/shared/domain/value-objects/Id";
-import { envConfig } from "@/config/env/EnvConfig";
+import { User } from "@/modules/users/domain/entities/User";
 
 type ResendValidateCodeInput = {
   userId: string;
+  to: CodeType;
 };
 
 type ResendValidateCodeOutput = {
@@ -45,16 +49,28 @@ export class ResendValidateCodeUseCase
       });
     }
 
-    const key = `${envConfig.getVerificationEmailKey()}:${user.id.value}`;
-
-    await this.codeVerificationService.deleteCode(key);
-
     const code = this.verificationCodeGeneratorService.generate();
 
-    await this.codeVerificationService.saveCode(key, code, 900);
+    await this.codeVerificationService.deleteCode(input.to, userId);
 
-    this.emailService.sendVerificationEmail(user.email.value, `${code}`);
+    if (input.to === "email") {
+      await this.sendEmailCode(user, code);
+    } else {
+      await this.sendPasswordCode(user, code);
+    }
 
     return { message: "Código enviado. Por favor, verifique." };
+  }
+
+  private async sendEmailCode(user: User, code: number) {
+    await this.codeVerificationService.saveCode("email", user.id, code);
+
+    this.emailService.sendVerificationEmail(user.email.value, `${code}`);
+  }
+
+  private async sendPasswordCode(user: User, code: number) {
+    await this.codeVerificationService.saveCode("password", user.id, code);
+
+    this.emailService.sendPasswordResetEmail(user.email.value, `${code}`);
   }
 }

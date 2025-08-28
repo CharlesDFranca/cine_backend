@@ -7,7 +7,6 @@ import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword"
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { inject, injectable } from "tsyringe";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
-import { envConfig } from "@/config/env/EnvConfig";
 
 type PasswordResetInput = {
   code: string;
@@ -45,15 +44,16 @@ export class PasswordResetUseCase
       });
     }
 
-    const key = `${envConfig.getResetPasswordKey()}:${user.id.value}`;
-
-    const storedCode = await this.codeVerificationService.getCode(key);
+    const storedCode = await this.codeVerificationService.getCode(
+      "password",
+      user.id,
+    );
 
     if (!storedCode || storedCode !== input.code) {
       throw new Error("Codigo invalido");
     }
 
-    await this.codeVerificationService.deleteCode(key);
+    await this.codeVerificationService.deleteCode("password", user.id);
 
     const oldPassword = UserPassword.create({
       value: input.oldPassword,

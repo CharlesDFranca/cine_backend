@@ -4,7 +4,6 @@ import { inject, injectable } from "tsyringe";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { Id } from "@/shared/domain/value-objects/Id";
-import { envConfig } from "@/config/env/EnvConfig";
 
 type ValidateEmailCodeInput = {
   userId: string;
@@ -40,9 +39,10 @@ export class ValidateEmailCodeUseCase
       });
     }
 
-    const key = `${envConfig.getVerificationEmailKey()}:${user.id.value}`;
-
-    const storedCode = await this.codeVerificationService.getCode(key);
+    const storedCode = await this.codeVerificationService.getCode(
+      "email",
+      user.id,
+    );
 
     if (!storedCode || storedCode !== input.code) {
       throw new Error("Codigo invalido");
@@ -52,7 +52,7 @@ export class ValidateEmailCodeUseCase
 
     await this.userRepository.update(user);
 
-    await this.codeVerificationService.deleteCode(key);
+    await this.codeVerificationService.deleteCode("email", user.id);
 
     return { message: "Usuário verificado com sucesso" };
   }

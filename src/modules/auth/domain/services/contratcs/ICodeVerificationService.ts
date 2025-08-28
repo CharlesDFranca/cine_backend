@@ -1,5 +1,9 @@
+import { Id } from "@/shared/domain/value-objects/Id";
+
+export type CodeType = "email" | "password";
+
 export interface ICodeVerificationService {
-  saveCode(key: string, code: number, ttlSeconds: number): Promise<void>;
-  getCode(key: string): Promise<string | null>;
-  deleteCode(key: string): Promise<void>;
+  saveCode(keyType: CodeType, userId: Id, code: number): Promise<void>;
+  getCode(keyType: CodeType, userId: Id): Promise<string | null>;
+  deleteCode(keyType: CodeType, userId: Id): Promise<void>;
 }

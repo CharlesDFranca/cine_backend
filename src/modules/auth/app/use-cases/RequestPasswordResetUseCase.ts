@@ -6,7 +6,6 @@ import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeV
 import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
-import { envConfig } from "@/config/env/EnvConfig";
 
 type RequestPasswordResetInput = {
   userId: string;
@@ -47,11 +46,7 @@ export class RequestPasswordResetUseCase
 
     const code = this.verificationCodeGeneratorService.generate();
 
-    await this.codeVerificationService.saveCode(
-      `${envConfig.getResetPasswordKey()}:${user.id.value}`,
-      code,
-      900,
-    );
+    await this.codeVerificationService.saveCode("password", user.id, code);
 
     this.emailService.sendPasswordResetEmail(user.email.value, `${code}`);
 

@@ -10,7 +10,6 @@ import { IHashProvider } from "../contracts/IHashProvider";
 import { IVerificationCodeGeneratorService } from "../../domain/services/contratcs/IVerificationCodeGeneratorService";
 import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
-import { envConfig } from "@/config/env/EnvConfig";
 
 type RegisterUserInput = {
   name: string;
@@ -68,11 +67,7 @@ export class RegisterUserUseCase
 
     await this.userRepository.save(user);
 
-    await this.codeVerificationService.saveCode(
-      `${envConfig.getVerificationEmailKey()}:${user.id.value}`,
-      code,
-      900,
-    );
+    await this.codeVerificationService.saveCode("email", user.id, code);
 
     this.emailService.sendVerificationEmail(user.email.value, `${code}`);
 

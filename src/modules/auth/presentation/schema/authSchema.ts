@@ -33,6 +33,10 @@ export const refreshTokenSchema = z.object({
   refreshToken: z.jwt(),
 });
 
+export const resendCodeSchema = z.object({
+  to: z.enum(["email", "password"]),
+});
+
 export const validateEmailCodeSchema = z.object({
   code: z.string(),
   userId: z.uuidv4(),
