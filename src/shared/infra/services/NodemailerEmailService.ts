@@ -3,6 +3,15 @@ import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import nodemailer from "nodemailer";
 import { injectable } from "tsyringe";
 
+import hbs from "handlebars";
+import fs from "fs";
+import path from "path";
+
+type Context = {
+  code: string;
+  [keyof: string]: unknown;
+};
+
 @injectable()
 export class NodemailerEmailService implements IEmailService {
   private transporter;
@@ -19,35 +28,45 @@ export class NodemailerEmailService implements IEmailService {
     });
   }
 
+  private compileTemplate(templateName: string, context: Context): string {
+    const filePath = path.resolve(
+      __dirname,
+      "..",
+      "..",
+      "presentation",
+      "views",
+      `${templateName}.hbs`,
+    );
+
+    const source = fs.readFileSync(filePath, "utf8");
+    const template = hbs.compile(source);
+    return template(context);
+  }
+
   async sendVerificationEmail(to: string, code: string): Promise<void> {
+    const html = this.compileTemplate("verify-email", {
+      code,
+    });
+
     await this.transporter.sendMail({
-      from: `"MinhaApp" <${envConfig.getSMTPEmail()}>`,
+      from: `"CineVerse" <${envConfig.getSMTPEmail()}>`,
       to,
       subject: "Confirme seu e-mail",
-      html: `
-        <h1>Bem-vindo!</h1>
-        <p>Seu código de verificação é: <b>${code}</b></p>
-        <p>Ou clique aqui para confirmar: 
-          <a href="http://localhost:3000/verify-email?code=${code}&email=${to}">
-            Confirmar e-mail
-          </a>
-        </p>
-      `,
+      html,
     });
   }
 
   async sendPasswordResetEmail(to: string, code: string): Promise<void> {
+    const html = this.compileTemplate("reset-password", {
+      code,
+      year: new Date().getFullYear(),
+    });
+
     await this.transporter.sendMail({
-      from: `"MinhaApp" <${envConfig.getSMTPEmail()}>`,
+      from: `"CineVerse" <${envConfig.getSMTPEmail()}>`,
       to,
-      subject: "Recupere sua senha",
-      html: `
-        <p>Use o link abaixo para redefinir sua senha:</p>
-        <p>Seu código de verificação é: <b>${code}</b></p>
-        <a href="http://localhost:3000/reset-password?token=${code}">
-          Redefinir senha
-        </a>
-      `,
+      subject: "Redefinição de senha",
+      html,
     });
   }
 }
