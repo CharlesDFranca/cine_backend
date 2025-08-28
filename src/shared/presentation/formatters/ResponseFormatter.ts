@@ -1,5 +1,5 @@
 export type ApiResponse<T> = {
-  sucess: boolean;
+  success: boolean;
   data: T | null;
   meta: Record<string, unknown> | null;
   errors: Record<string, unknown>;
@@ -22,7 +22,7 @@ export class ResponseFormatter {
     message = "Operation carried out successfully.",
   ): ApiResponse<T> {
     return {
-      sucess: true,
+      success: true,
       data,
       meta: meta ?? null,
       errors: {},
@@ -36,7 +36,7 @@ export class ResponseFormatter {
     message = "An error occurred during the operation.",
   ) {
     return {
-      sucess: false,
+      success: false,
       data: null,
       meta: meta ?? null,
       errors,

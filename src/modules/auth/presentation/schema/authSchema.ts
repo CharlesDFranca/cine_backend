@@ -38,7 +38,7 @@ export const resendCodeSchema = z.object({
 });
 
 export const validateEmailCodeSchema = z.object({
-  code: z.string(),
+  code: z.coerce.string(),
   userId: z.uuidv4(),
 });
 

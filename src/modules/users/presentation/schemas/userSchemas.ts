@@ -18,3 +18,7 @@ export const updateUserSchema = z.object({
     .optional()
     .openapi("User password", { example: "Str0ng!!" }),
 });
+
+export const findUserByEmailSchema = z.object({
+  email: z.email(),
+});

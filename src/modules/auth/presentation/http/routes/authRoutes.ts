@@ -24,15 +24,17 @@ authRoutes.post("/resend-code", (req: Request, res: Response) =>
   AuthControllers.resendCode(req, res),
 );
 
-authRoutes.get(
-  "/request-password-reset",
-  AuthMiddleware.auth,
-  (req: Request, res: Response) =>
-    AuthControllers.requestPasswordReset(req, res),
+authRoutes.post("/request-password-reset", (req: Request, res: Response) =>
+  AuthControllers.requestPasswordResetByEmail(req, res),
 );
 
 authRoutes.post(
-  "/reset-password",
+  "/change-password",
   AuthMiddleware.auth,
-  (req: Request, res: Response) => AuthControllers.resetPassword(req, res),
+  (req: Request, res: Response) =>
+    AuthControllers.requestPasswordResetByUserId(req, res),
+);
+
+authRoutes.post("/reset-password", (req: Request, res: Response) =>
+  AuthControllers.resetPassword(req, res),
 );

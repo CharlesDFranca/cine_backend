@@ -14,10 +14,14 @@ import { LoginUserUseCase } from "@/modules/auth/app/use-cases/LoginUserUseCase"
 import { RefreshTokenUseCase } from "@/modules/auth/app/use-cases/RefreshTokenUseCase";
 import { ValidateEmailCodeUseCase } from "@/modules/auth/app/use-cases/ValidateEmailCodeUseCase";
 import { ResendValidateCodeUseCase } from "@/modules/auth/app/use-cases/ResendValidateCodeUseCase";
-import { findUserByIdSchema } from "@/modules/users/presentation/schemas/userSchemas";
-import { RequestPasswordResetUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetUseCase";
+import {
+  findUserByEmailSchema,
+  findUserByIdSchema,
+} from "@/modules/users/presentation/schemas/userSchemas";
 import { PasswordResetUseCase } from "@/modules/auth/app/use-cases/PasswordResetUseCase";
 import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
+import { RequestPasswordResetByEmailUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetByEmailUseCase";
+import { RequestPasswordResetByUserIdUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetByUserIdUseCase";
 
 export class AuthControllers {
   private constructor() {}
@@ -92,12 +96,25 @@ export class AuthControllers {
     res.status(200).json(response);
   }
 
-  static async requestPasswordReset(req: Request, res: Response) {
+  static async requestPasswordResetByEmail(req: Request, res: Response) {
+    const input = findUserByEmailSchema.safeParse(req.body);
+
+    if (!input.success) throw input.error;
+
+    const usecase = container.resolve(RequestPasswordResetByEmailUseCase);
+    const data = await UseCaseExecutor.run(usecase, { ...input.data });
+
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
+  }
+
+  static async requestPasswordResetByUserId(req: Request, res: Response) {
     const input = findUserByIdSchema.safeParse(req.user);
 
     if (!input.success) throw input.error;
 
-    const usecase = container.resolve(RequestPasswordResetUseCase);
+    const usecase = container.resolve(RequestPasswordResetByUserIdUseCase);
     const data = await UseCaseExecutor.run(usecase, { ...input.data });
 
     const response = ResponseFormatter.success(data);
