@@ -4,7 +4,9 @@ import {
   refreshTokenSchema,
   registerUserSchema,
   resendCodeSchema,
-  resetPasswordSchema,
+  resetPasswordByEmailSchema,
+  resetPasswordByUserIdSchema,
+  resetPasswordTokenSchema,
   validateEmailCodeSchema,
 } from "../../schema/authSchema";
 import { container } from "tsyringe";
@@ -18,10 +20,11 @@ import {
   findUserByEmailSchema,
   findUserByIdSchema,
 } from "@/modules/users/presentation/schemas/userSchemas";
-import { PasswordResetUseCase } from "@/modules/auth/app/use-cases/PasswordResetUseCase";
+import { PasswordResetByUserIdUseCase } from "@/modules/auth/app/use-cases/PasswordResetByUserIdUseCase";
 import { ResponseFormatter } from "@/shared/presentation/formatters/ResponseFormatter";
 import { RequestPasswordResetByEmailUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetByEmailUseCase";
 import { RequestPasswordResetByUserIdUseCase } from "@/modules/auth/app/use-cases/RequestPasswordResetByUserIdUseCase";
+import { PasswordResetByEmailUseCase } from "@/modules/auth/app/use-cases/PasswordResetByEmailUseCase";
 
 export class AuthControllers {
   private constructor() {}
@@ -122,17 +125,35 @@ export class AuthControllers {
     res.status(200).json(response);
   }
 
-  static async resetPassword(req: Request, res: Response) {
-    const input = resetPasswordSchema.safeParse(req.body);
+  static async resetPasswordByUserId(req: Request, res: Response) {
+    const input = resetPasswordByUserIdSchema.safeParse(req.body);
     const userId = findUserByIdSchema.safeParse(req.user);
 
     if (!input.success) throw input.error;
     if (!userId.success) throw userId.error;
 
-    const usecase = container.resolve(PasswordResetUseCase);
+    const usecase = container.resolve(PasswordResetByUserIdUseCase);
     const data = await UseCaseExecutor.run(usecase, {
       ...input.data,
       ...userId.data,
+    });
+
+    const response = ResponseFormatter.success(data);
+
+    res.status(200).json(response);
+  }
+
+  static async resetPasswordByEmail(req: Request, res: Response) {
+    const input = resetPasswordByEmailSchema.safeParse(req.body);
+    const token = resetPasswordTokenSchema.safeParse(req.query);
+
+    if (!token.success) throw token.error;
+    if (!input.success) throw input.error;
+
+    const usecase = container.resolve(PasswordResetByEmailUseCase);
+    const data = await UseCaseExecutor.run(usecase, {
+      ...input.data,
+      resetPasswordToken: token.data.resetToken,
     });
 
     const response = ResponseFormatter.success(data);

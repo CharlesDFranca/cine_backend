@@ -6,14 +6,16 @@ import { IVerificationCodeGeneratorService } from "../../domain/services/contrat
 import { IEmailService } from "@/shared/app/contracts/IEmailService";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { UserEmail } from "@/modules/users/domain/value-objects/UserEmail";
+import {
+  ITokenProvider,
+  ResetPasswordToken,
+} from "../contracts/ITokenProvider";
 
 type RequestPasswordResetByEmailInput = {
   email: string;
 };
 
-type RequestPasswordResetEmailOutput = {
-  message: string;
-};
+type RequestPasswordResetEmailOutput = ResetPasswordToken;
 
 @injectable()
 export class RequestPasswordResetByEmailUseCase
@@ -29,6 +31,8 @@ export class RequestPasswordResetByEmailUseCase
     private readonly verificationCodeGeneratorService: IVerificationCodeGeneratorService,
     @inject("EmailService")
     private readonly emailService: IEmailService,
+    @inject("TokenProvider")
+    private readonly tokenProvider: ITokenProvider,
   ) {}
 
   async execute(
@@ -51,6 +55,10 @@ export class RequestPasswordResetByEmailUseCase
 
     this.emailService.sendPasswordResetEmail(user.email.value, `${code}`);
 
-    return { message: "Um código foi enviado ao seu email." };
+    const resetPasswordToken = this.tokenProvider.generateResetPasswordToken({
+      userId: user.id.value,
+    });
+
+    return resetPasswordToken;
   }
 }

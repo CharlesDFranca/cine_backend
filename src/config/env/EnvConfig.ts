@@ -12,6 +12,7 @@ const envConfigSchema = z.object({
 
   ACCESS_TOKEN_SECRET: z.string().min(128).max(128),
   REFRESH_TOKEN_SECRET: z.string().min(128).max(128),
+  RESET_PASSWORD_SECRET: z.string().min(128).max(128),
 
   STORAGE_DRIVER: z.string().default("disk"),
 
@@ -39,6 +40,7 @@ export interface IEnvConfig {
   getDbUrl(): string;
   getAccessTokenSecret(): string;
   getRefreshTokenSecret(): string;
+  getResetPasswordSecret(): string;
   getStorageDriver(): string;
   getCloudinaryApiKey(): string;
   getCloudinaryApiSecret(): string;
@@ -68,6 +70,7 @@ class EnvConfig implements IEnvConfig {
 
     this.data = result.data;
   }
+
   getPort(): number {
     return this.data.PORT;
   }
@@ -82,6 +85,10 @@ class EnvConfig implements IEnvConfig {
 
   getRefreshTokenSecret(): string {
     return this.data.REFRESH_TOKEN_SECRET;
+  }
+
+  getResetPasswordSecret(): string {
+    return this.data.RESET_PASSWORD_KEY;
   }
 
   getStorageDriver(): string {

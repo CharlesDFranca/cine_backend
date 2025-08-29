@@ -6,33 +6,31 @@ import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError"
 import { UserPassword } from "@/modules/users/domain/value-objects/UserPassword";
 import { InvalidCredentialsError } from "../errors/InvalidCredentialsError";
 import { inject, injectable } from "tsyringe";
-import { ICodeVerificationService } from "../../domain/services/contratcs/ICodeVerificationService";
 
-type PasswordResetInput = {
-  code: string;
+type PasswordResetByUserIdInput = {
   userId: string;
   oldPassword: string;
   newPassword: string;
 };
 
-type PasswordResetOutput = {
+type PasswordResetByUserIdOutput = {
   message: string;
 };
 
 @injectable()
-export class PasswordResetUseCase
-  implements IUseCase<PasswordResetInput, PasswordResetOutput>
+export class PasswordResetByUserIdUseCase
+  implements IUseCase<PasswordResetByUserIdInput, PasswordResetByUserIdOutput>
 {
   constructor(
     @inject("UserRepository")
     private readonly userRepository: IUserRepository,
     @inject("HashProvider")
     private readonly hashProvider: IHashProvider,
-    @inject("CodeVerificationService")
-    private readonly codeVerificationService: ICodeVerificationService,
   ) {}
 
-  async execute(input: PasswordResetInput): Promise<PasswordResetOutput> {
+  async execute(
+    input: PasswordResetByUserIdInput,
+  ): Promise<PasswordResetByUserIdOutput> {
     const userId = Id.refresh({ value: input.userId });
 
     const user = await this.userRepository.findById(userId);
@@ -43,17 +41,6 @@ export class PasswordResetUseCase
         userId: userId.value,
       });
     }
-
-    const storedCode = await this.codeVerificationService.getCode(
-      "password",
-      user.id,
-    );
-
-    if (!storedCode || storedCode !== input.code) {
-      throw new Error("Codigo invalido");
-    }
-
-    await this.codeVerificationService.deleteCode("password", user.id);
 
     const oldPassword = UserPassword.create({
       value: input.oldPassword,

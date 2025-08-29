@@ -12,7 +12,7 @@ authRoutes.post("/login", (req: Request, res: Response) =>
   AuthControllers.login(req, res),
 );
 
-authRoutes.post("/refreshToken", (req: Request, res: Response) =>
+authRoutes.post("/refresh-token", (req: Request, res: Response) =>
   AuthControllers.refresh(req, res),
 );
 
@@ -28,6 +28,10 @@ authRoutes.post("/request-password-reset", (req: Request, res: Response) =>
   AuthControllers.requestPasswordResetByEmail(req, res),
 );
 
+authRoutes.post("/change-password-by-email", (req: Request, res: Response) =>
+  AuthControllers.resetPasswordByEmail(req, res),
+);
+
 authRoutes.post(
   "/change-password",
   AuthMiddleware.auth,
@@ -35,6 +39,9 @@ authRoutes.post(
     AuthControllers.requestPasswordResetByUserId(req, res),
 );
 
-authRoutes.post("/reset-password", (req: Request, res: Response) =>
-  AuthControllers.resetPassword(req, res),
+authRoutes.post(
+  "/change-password-by-user-id",
+  AuthMiddleware.auth,
+  (req: Request, res: Response) =>
+    AuthControllers.resetPasswordByUserId(req, res),
 );

@@ -42,8 +42,16 @@ export const validateEmailCodeSchema = z.object({
   userId: z.uuidv4(),
 });
 
-export const resetPasswordSchema = z.object({
-  code: z.string(),
+export const resetPasswordByUserIdSchema = z.object({
   oldPassword: z.string(),
   newPassword: z.string(),
+});
+
+export const resetPasswordByEmailSchema = z.object({
+  code: z.coerce.string(),
+  newPassword: z.string(),
+});
+
+export const resetPasswordTokenSchema = z.object({
+  resetToken: z.string(),
 });

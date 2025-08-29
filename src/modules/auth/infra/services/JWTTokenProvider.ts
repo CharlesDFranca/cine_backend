@@ -3,6 +3,7 @@ import {
   ITokenProvider,
   TokenPayload,
   TokensGenerated,
+  ResetPasswordToken,
 } from "../../app/contracts/ITokenProvider";
 import jwt from "jsonwebtoken";
 import { injectable } from "tsyringe";
@@ -12,6 +13,7 @@ import { InvalidTokenError } from "../errors/InvalidTokenError";
 export class JWTTokenProvider implements ITokenProvider {
   private readonly ACCESS_TOKEN_SECRET = envConfig.getAccessTokenSecret();
   private readonly REFRESH_TOKEN_SECRET = envConfig.getRefreshTokenSecret();
+  private readonly RESET_PASSWORD_SECRET = envConfig.getResetPasswordSecret();
 
   generate(payload: TokenPayload): TokensGenerated {
     const accessToken = jwt.sign({ ...payload }, this.ACCESS_TOKEN_SECRET, {
@@ -23,6 +25,18 @@ export class JWTTokenProvider implements ITokenProvider {
     });
 
     return { accessToken, refreshToken };
+  }
+
+  generateResetPasswordToken(payload: TokenPayload): ResetPasswordToken {
+    const resetPasswordToken = jwt.sign(
+      { ...payload },
+      this.RESET_PASSWORD_SECRET,
+      {
+        expiresIn: "15m",
+      },
+    );
+
+    return { resetPasswordToken };
   }
 
   verifyAccessToken(accessToken: string): TokenPayload {
@@ -56,6 +70,26 @@ export class JWTTokenProvider implements ITokenProvider {
         });
       }
       throw new InvalidTokenError("Refresh token inválido", {
+        reason: "malformed",
+        errorClass: this.constructor.name,
+      });
+    }
+  }
+
+  verifyResetPasswordToken(resetPasswordToken: string): TokenPayload {
+    try {
+      return jwt.verify(
+        resetPasswordToken,
+        this.RESET_PASSWORD_SECRET,
+      ) as TokenPayload;
+    } catch (err) {
+      if (err instanceof jwt.TokenExpiredError) {
+        throw new InvalidTokenError("Reset Password Token expirado", {
+          reason: "expired",
+          errorClass: this.constructor.name,
+        });
+      }
+      throw new InvalidTokenError("Reset Password Token inválido", {
         reason: "malformed",
         errorClass: this.constructor.name,
       });
