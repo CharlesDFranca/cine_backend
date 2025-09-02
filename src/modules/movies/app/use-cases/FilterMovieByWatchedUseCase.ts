@@ -6,10 +6,12 @@ import { Id } from "@/shared/domain/value-objects/Id";
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { MovieMapper } from "../mappers/MovieMapper";
 import { MovieDetailsDto } from "../dtos/MovieDtos";
+import { SortCriteria, SortDirection } from "../../domain/types/MovieTypes";
 
 type FilterMovieByWatchedInput = {
   userId: string;
   watched: boolean;
+  orderBy?: Partial<Record<SortCriteria, SortDirection>>;
 };
 
 type FilterMovieByWatchedOutput = MovieDetailsDto[];
@@ -31,7 +33,11 @@ export class FilterMovieByWatchedUseCase
 
     const [user, movies] = await Promise.all([
       this.userRepository.findById(userId),
-      this.movieRepository.filterByWatched(userId, input.watched),
+      this.movieRepository.filterByWatched(
+        userId,
+        input.watched,
+        input.orderBy,
+      ),
     ]);
 
     if (!user) {

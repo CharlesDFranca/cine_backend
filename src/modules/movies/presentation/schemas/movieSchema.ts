@@ -81,7 +81,6 @@ export const isWatchedMovieSchema = z.object({
   watched: z
     .enum(["true", "false"])
     .transform((val) => val === "true")
-    .optional()
     .openapi("Movie Watched", { example: true }),
 });
 

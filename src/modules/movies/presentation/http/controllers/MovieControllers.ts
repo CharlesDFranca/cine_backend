@@ -46,6 +46,7 @@ export class MovieControllers {
   static async findByTitle(req: Request, res: Response) {
     const input = findMovieByTitleSchema.safeParse(req.query);
     const userId = findUserByIdSchema.safeParse(req.user);
+    const orderBy = orderMovieBySchema.safeParse(req.body);
 
     if (input.error) throw input.error;
     if (userId.error) throw userId.error;
@@ -54,6 +55,7 @@ export class MovieControllers {
     const data = await UseCaseExecutor.run(usecase, {
       ...input.data,
       ...userId.data,
+      ...orderBy.data,
     });
     const response = ResponseFormatter.success(data);
 
@@ -80,6 +82,7 @@ export class MovieControllers {
   static async fiterByWatched(req: Request, res: Response) {
     const userId = findUserByIdSchema.safeParse(req.user);
     const input = isWatchedMovieSchema.safeParse(req.query);
+    const orderBy = orderMovieBySchema.safeParse(req.body);
 
     if (userId.error) throw userId.error;
     if (input.error) throw input.error;
@@ -88,6 +91,7 @@ export class MovieControllers {
     const data = await UseCaseExecutor.run(usecase, {
       ...input.data,
       ...userId.data,
+      ...orderBy.data,
     });
     const response = ResponseFormatter.success(data);
 

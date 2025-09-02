@@ -7,10 +7,12 @@ import { IUserRepository } from "@/modules/users/domain/repositories/IUserReposi
 import { UserNotFoundError } from "@/modules/users/app/errors/UserNotFoundError";
 import { MovieMapper } from "../mappers/MovieMapper";
 import { MovieDetailsDto } from "../dtos/MovieDtos";
+import { SortCriteria, SortDirection } from "../../domain/types/MovieTypes";
 
 type FindMovieByTitleInput = {
   title: string;
   userId: string;
+  orderBy?: Partial<Record<SortCriteria, SortDirection>>;
 };
 
 type FindMovieByTitleOutput = MovieDetailsDto[];
@@ -30,7 +32,7 @@ export class FindMovieByTitleUseCase
 
     const [user, movies] = await Promise.all([
       this.userRepository.findById(userId),
-      this.movieRepository.findByTitle(userId, movieTitle),
+      this.movieRepository.findByTitle(userId, movieTitle, input.orderBy),
     ]);
 
     if (!user) {

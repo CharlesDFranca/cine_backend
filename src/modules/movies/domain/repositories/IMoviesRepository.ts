@@ -6,15 +6,21 @@ import { SortCriteria, SortDirection } from "../types/MovieTypes";
 export interface IMoviesRepository {
   save(movie: Movie): Promise<void>;
   findById(movieId: Id): Promise<Movie | null>;
-  findByTitle(userId: Id, movieTitle: MovieTitle): Promise<Movie[]>;
+  findByTitle(
+    userId: Id,
+    movieTitle: MovieTitle,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]>;
   findByUserId(
     userId: Id,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]>;
+  filterByWatched(
+    userId: Id,
+    watched: boolean,
     orderBy?: Partial<Record<SortCriteria, SortDirection>>,
   ): Promise<Movie[]>;
   exitsByTitleAndShowtime(movie: Movie): Promise<boolean>;
   update(movie: Movie): Promise<void>;
   delete(movieId: Id): Promise<void>;
-  findWatched(userId: Id): Promise<Movie[]>;
-  findUnwatched(userId: Id): Promise<Movie[]>;
-  filterByWatched(userId: Id, watched: boolean): Promise<Movie[]>;
 }

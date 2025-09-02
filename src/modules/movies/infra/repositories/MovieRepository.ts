@@ -23,52 +23,30 @@ export class MovieRepository implements IMoviesRepository {
     return TypeormMovieMapper.toDomain(movie);
   }
 
+  async findByTitle(
+    userId: Id,
+    movieTitle: MovieTitle,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]> {
+    return await this.findWithOrder(
+      { title: movieTitle.value, userId: userId.value },
+      orderBy,
+    );
+  }
+
   async findByUserId(
     userId: Id,
-    orderBy: Partial<Record<SortCriteria, SortDirection>>,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
   ): Promise<Movie[]> {
-    const movies = await this.repository.find({
-      where: { userId: userId.value },
-      order: orderBy,
-    });
-
-    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+    return await this.findWithOrder({ userId: userId.value }, orderBy);
   }
 
-  async findByTitle(userId: Id, movieTitle: MovieTitle): Promise<Movie[]> {
-    const movies = await this.repository.findBy({
-      userId: userId.value,
-      title: movieTitle.value,
-    });
-
-    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
-  }
-
-  async findWatched(userId: Id): Promise<Movie[]> {
-    const movies = await this.repository.findBy({
-      userId: userId.value,
-      watched: true,
-    });
-
-    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
-  }
-
-  async findUnwatched(userId: Id): Promise<Movie[]> {
-    const movies = await this.repository.findBy({
-      userId: userId.value,
-      watched: false,
-    });
-
-    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
-  }
-
-  async filterByWatched(userId: Id, watched: boolean): Promise<Movie[]> {
-    const movies = await this.repository.findBy({
-      userId: userId.value,
-      watched,
-    });
-
-    return movies.map((movie) => TypeormMovieMapper.toDomain(movie));
+  async filterByWatched(
+    userId: Id,
+    watched: boolean,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]> {
+    return await this.findWithOrder({ userId: userId.value, watched }, orderBy);
   }
 
   async exitsByTitleAndShowtime(movie: Movie): Promise<boolean> {
@@ -87,5 +65,16 @@ export class MovieRepository implements IMoviesRepository {
 
   async delete(movieId: Id): Promise<void> {
     await this.repository.delete({ id: movieId.value });
+  }
+
+  private async findWithOrder(
+    where: Partial<MovieEntity>,
+    orderBy?: Partial<Record<SortCriteria, SortDirection>>,
+  ): Promise<Movie[]> {
+    const movies = await this.repository.find({
+      where,
+      order: orderBy,
+    });
+    return movies.map(TypeormMovieMapper.toDomain);
   }
 }
